@@ -2,18 +2,16 @@ import React, {useEffect} from 'react';
 import {View, Button, Alert} from 'react-native';
 import TouchID from 'react-native-touch-id';
 import {useVisitorData} from '@fingerprintjs/fingerprintjs-pro-react-native';
-import {signUp, logincall} from '../api/apicalls';
+import {signUp, logincall} from '../api/auth.api';
 
 const AuthComponent = ({navigation}) => {
   const {data, getData} = useVisitorData();
   useEffect(() => {
-    console.log('AuthComponent called use efecnt');
     getData();
   }, []);
 
   const handleLogin = async isLogin => {
     try {
-      console.log('handleLogin called');
       const supportOptionalConfigObject = {
         unifiedErrors: false,
       };

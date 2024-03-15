@@ -1,12 +1,6 @@
-import axios from 'axios';
+import axiosInstance from './api';
 
-const baseURL = 'http://10.0.0.17:5005';
-const axiosInstance = axios.create({
-  baseURL,
-});
-
-// Function to handle signup
-async function signUp(fingerprint) {
+export async function signUp(fingerprint) {
   console.log('signUp called in api', fingerprint);
 
   const data = {
@@ -17,8 +11,7 @@ async function signUp(fingerprint) {
   return response.data;
 }
 
-// Function to handle login
-async function logincall(fingerprint) {
+export async function logincall(fingerprint) {
   console.log('logIn called in api', fingerprint);
   const data = {
     fingerPrint: fingerprint,
@@ -27,8 +20,3 @@ async function logincall(fingerprint) {
   const response = await axiosInstance.post('/api/auth/login', data);
   return response.data;
 }
-
-module.exports = {
-  signUp,
-  logincall,
-};
