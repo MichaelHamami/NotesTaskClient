@@ -5,34 +5,12 @@ import RNEventSource from 'react-native-event-source';
 const HomeComponent = ({navigation}) => {
   const handleLogout = () => {
     console.log('handleLogout called');
-    // navigation.navigate('Login');
   };
 
   const [listening, setListening] = useState(false);
   const [message, setMessage] = useState('');
 
-  // useEffect(() => {
-  //   console.log('called use effect', listening);
-  //   const socket = new WebSocket('ws://10.0.0.17:5005');
-
-  //   socket.onmessage = function (event) {
-  //     console.log('Message from server ', event.data);
-  //     setMessage(event.data);
-  //   };
-  //   socket.onerror = function (event) {
-  //     console.log('Error from server ', event);
-  //   };
-  //   socket.onclose = function (event) {
-  //     console.log('Close from server ', event);
-  //   };
-  //   socket.onopen = function () {
-  //     console.log('Open from server ');
-  //     socket.send('Hello Server!');
-  //   };
-  // }, []);
-
   useEffect(() => {
-    console.log('called use efecnt', listening);
     if (listening) return;
     const eventSource = new RNEventSource('http://10.0.0.17:5005/events');
 

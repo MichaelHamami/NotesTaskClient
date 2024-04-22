@@ -11,7 +11,7 @@ export async function signUp(fingerprint) {
   return response.data;
 }
 
-export async function logincall(fingerprint) {
+export async function login(fingerprint) {
   console.log('logIn called in api', fingerprint);
   const data = {
     fingerPrint: fingerprint,

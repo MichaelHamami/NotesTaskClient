@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {View, Button, Alert} from 'react-native';
 import TouchID from 'react-native-touch-id';
 import {useVisitorData} from '@fingerprintjs/fingerprintjs-pro-react-native';
-import {signUp, logincall} from '../api/auth.api';
+import {signUp, login} from '../api/auth.api';
 
 const AuthComponent = ({navigation}) => {
   const {data, getData} = useVisitorData();
@@ -26,44 +26,28 @@ const AuthComponent = ({navigation}) => {
         cancelText: 'cancel button text',
       };
 
-      const isSupported = await TouchID.isSupported(
-        supportOptionalConfigObject,
-      );
+      const isSupported = await TouchID.isSupported(supportOptionalConfigObject);
 
       if (isSupported) {
-        const touchIDResponse = await TouchID.authenticate(
-          'Authenticate with Touch ID',
-          optionalConfigObject,
-        );
+        const touchIDResponse = await TouchID.authenticate('Authenticate with Touch ID', optionalConfigObject);
         if (touchIDResponse && data.visitorFound) {
           performLoginOrSignup(isLogin, data.visitorId);
         } else {
-          Alert.alert(
-            'Authentication Failed',
-            'Please try again or enter your username and passworasdasd.',
-          );
+          Alert.alert('Authentication Failed', 'Please try again or enter your username and passworasdasd.');
         }
       } else {
-        Alert.alert(
-          'Touch ID Not Supported',
-          'Please enter your username and password.',
-        );
+        Alert.alert('Touch ID Not Supported', 'Please enter your username and password.');
       }
     } catch (error) {
       console.error('Touch ID Error:', error);
-      Alert.alert(
-        'Error',
-        'An error occurred. Please try again or enter your username and password.',
-      );
+      Alert.alert('Error', 'An error occurred. Please try again or enter your username and password.');
     }
   };
 
   const performLoginOrSignup = async (isLogin, fingerprint) => {
     console.log(`'Performing ${isLogin ? 'login' : 'signup'}...'`);
     try {
-      const response = (await isLogin)
-        ? logincall(fingerprint)
-        : signUp(fingerprint);
+      const response = (await isLogin) ? login(fingerprint) : signUp(fingerprint);
 
       console.log('request successful:', response);
       navigation.navigate('Home');
