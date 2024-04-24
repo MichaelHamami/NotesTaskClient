@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, useWindowDimensions, TouchableOpacity, Text, StyleSheet, StatusBar, Animated} from 'react-native';
-import {TabView, SceneMap} from 'react-native-tab-view';
+import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -19,8 +19,8 @@ function ProductList() {
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'shoppingList', title: labels.shoppingList},
-    {key: 'productList', title: labels.productList},
+    {key: 'shoppingList', title: labels.shoppingList, iconName: 'shopping-cart'},
+    {key: 'productList', title: labels.productList, iconName: 'bars'}, //TODO: change to better icon
   ]);
 
   const onPlusPress = () => {
@@ -31,36 +31,24 @@ function ProductList() {
     console.log('onMenuPress pressed');
   };
 
-  const renderTab = props => {
-    const inputRange = props.navigationState.routes.map((x, i) => i);
-
-    return (
-      <View style={styles.tabBar}>
-        {props.navigationState.routes.map((route, i) => {
-          const opacity = props.position.interpolate({
-            inputRange,
-            outputRange: inputRange.map(inputIndex => (inputIndex === i ? 1 : 0.5)),
-          });
-          return (
-            <TouchableOpacity style={styles.tabItem} onPress={() => setIndex(i)}>
-              <Icon name="bars" size={24} color="white" />
-              {/* <Text style={styles.title}>{route.title}</Text> */}
-              <Animated.Text style={{opacity, color: 'white'}}>{route.title}</Animated.Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    );
-  };
+  const renderTabBar = props => (
+    <TabBar
+      {...props}
+      indicatorStyle={{backgroundColor: 'white', height: 4}}
+      renderLabel={({route, focused}) => <Text style={{color: focused ? 'white' : 'black'}}>{route.title}</Text>}
+      renderIcon={({route, color}) => <Icon name={route.iconName} color={color} size={20} />}
+      style={styles.tabBar}
+    />
+  );
 
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.button} onPress={onPlusPress}>
+        <TouchableOpacity style={styles.sideButtons} onPress={onPlusPress}>
           <Icon name="bars" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>{labels.myLists}</Text>
-        <TouchableOpacity style={styles.button} onPress={onMenuPress}>
+        <TouchableOpacity style={styles.sideButtons} onPress={onMenuPress}>
           <Icon name="plus" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -69,7 +57,7 @@ function ProductList() {
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{width: layout.width}}
-        renderTabBar={renderTab}
+        renderTabBar={renderTabBar}
       />
     </View>
   );
@@ -84,7 +72,7 @@ const styles = StyleSheet.create({
     height: 56,
     backgroundColor: '#183153',
   },
-  button: {
+  sideButtons: {
     padding: 8,
   },
   title: {
@@ -94,16 +82,6 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: '#183153',
-
-    borderBottomColor: '#ccc',
-    flexDirection: 'row',
-    paddingTop: StatusBar.currentHeight,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
 });
 
