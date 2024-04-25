@@ -13,7 +13,7 @@ const renderScene = SceneMap({
   productList: SecondRoute,
 });
 
-function ProductList() {
+function ProductList({navigation}) {
   const layout = useWindowDimensions();
   const labels = useLabelsContext();
 
@@ -24,7 +24,7 @@ function ProductList() {
   ]);
 
   const onPlusPress = () => {
-    console.log('onPlusPress clicked');
+    navigation.navigate('CreateList');
   };
 
   const onMenuPress = () => {
@@ -44,11 +44,11 @@ function ProductList() {
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.sideButtons} onPress={onPlusPress}>
+        <TouchableOpacity style={styles.sideButtons} onPress={onMenuPress}>
           <Icon name="bars" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>{labels.myLists}</Text>
-        <TouchableOpacity style={styles.sideButtons} onPress={onMenuPress}>
+        <TouchableOpacity style={styles.sideButtons} onPress={onPlusPress}>
           <Icon name="plus" size={24} color="white" />
         </TouchableOpacity>
       </View>

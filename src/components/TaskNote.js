@@ -16,7 +16,7 @@ const TaskNote = ({title, description, isCompleted, type, endDate, circulationTi
 
   return (
     <View style={styles.container}>
-      <View style={styles.notExpandedConatiner}>
+      <View style={styles.notExpandedContainer}>
         <View style={styles.startContainer}>
           <CheckBox value={isSelected} onValueChange={handleCheckBoxClicked} style={styles.checkbox} />
           <Text style={styles.title}>{title}</Text>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 14,
   },
-  notExpandedConatiner: {
+  notExpandedContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

@@ -5,6 +5,7 @@ import AuthComponent from './src/components/Auth';
 import HomeComponent from './src/components/Home';
 import NotesList from './src/components/NotesList';
 import ProductList from './src/components/ProductList/ProductList';
+import CreateList from './src/components/CreateList';
 import store from './src/redux/store';
 import {Provider} from 'react-redux';
 import {LabelsContextProvider} from './src/context/LabelsContext/label.context';
@@ -18,6 +19,7 @@ function App(): React.JSX.Element {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="ProductList" component={ProductList} />
+            <Stack.Screen name="CreateList" component={CreateList} />
             <Stack.Screen name="NotesList" component={NotesList} />
             <Stack.Screen name="Home" component={HomeComponent} />
             <Stack.Screen name="Login" component={AuthComponent} />

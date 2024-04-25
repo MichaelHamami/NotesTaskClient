@@ -1,10 +1,9 @@
-import {AppRegistry} from 'react-native';
+import React, {useEffect} from 'react';
+import {AppRegistry, I18nManager} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
-import {I18nManager} from 'react-native';
 import {FingerprintJsProProvider} from '@fingerprintjs/fingerprintjs-pro-react-native';
 import config from './config';
-import React, {useEffect} from 'react';
 
 const WrappedApp = () => {
   const isRTL = I18nManager.isRTL;
