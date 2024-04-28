@@ -1,1 +1,2 @@
-export const selectNotes = state => state.notes.notes;
+export * from './note.selectors';
+export * from './productList.selectors';

@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Toast from 'react-native-easy-toast';
 import * as ReduxActions from '../redux/actions/productList.actions';
 import {createProductList} from '../api/productList.api';
+import * as Constant from '../constants';
 
 const CreateList = ({navigation}) => {
   const labels = useLabelsContext();
@@ -23,7 +24,7 @@ const CreateList = ({navigation}) => {
   ];
 
   const [inputValue, setInputValue] = useState('');
-  const [selectedOption, setSelectedOption] = useState(options[0].value);
+  const [selectedOption, setSelectedOption] = useState(options[0].value); //TODO: selected the option by optional route params
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,11 +32,13 @@ const CreateList = ({navigation}) => {
 
   const createList = async listName => {
     setIsLoading(true);
+
     try {
-      const body = {name: listName};
+      const body = {name: listName, type: selectedOption};
       const data = await createProductList(body);
       console.log(data); // {"_id:..."}
       dispatch(ReduxActions.addProductList(data));
+      // TODO: navigate to the selected list by the id
     } catch (error) {
       console.error('Error creating product list:', error);
       this.toast.show(labels.creatingListErrorToaster, 2000);
@@ -56,8 +59,8 @@ const CreateList = ({navigation}) => {
   const SelectableOption = ({option, isSelected, onSelect}) => {
     return (
       <TouchableOpacity style={[styles.optionContainer, isSelected && styles.selectedOption]} onPress={onSelect}>
-        {isSelected && <Icon name={'check-circle'} size={20} color={'#183153'} />}
-        <Text style={{color: '#183153', fontSize: 20}}>{option.label}</Text>
+        {isSelected && <Icon name={'check-circle'} size={20} color={Constant.PRIMARY_COLOR} />}
+        <Text style={{color: Constant.PRIMARY_COLOR, fontSize: 20}}>{option.label}</Text>
       </TouchableOpacity>
     );
   };
@@ -117,7 +120,7 @@ const headerStyles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingHorizontal: 16,
     height: 56,
-    backgroundColor: '#183153',
+    backgroundColor: Constant.PRIMARY_COLOR,
   },
   titleContainer: {
     flex: 1,
@@ -160,13 +163,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   selectedOption: {
-    borderColor: '#183153',
+    borderColor: Constant.PRIMARY_COLOR,
     borderWidth: 1,
     gap: 5,
   },
   buttonContainer: {
     alignSelf: 'center',
-    backgroundColor: '#183153',
+    backgroundColor: Constant.PRIMARY_COLOR,
     borderRadius: 16,
     paddingVertical: 10,
     alignItems: 'center',

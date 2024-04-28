@@ -1,4 +1,4 @@
-import {ADD_PRODUCT_LIST, DELETE_PRODUCT_LIST, GET_PRODUCT_LISTS} from '../../redux/actions/productList.actions';
+import {ADD_PRODUCT_LIST, DELETE_PRODUCT_LIST, GET_PRODUCT_LISTS, UPDATE_PRODUCT_LIST} from '../../redux/actions/productList.actions';
 
 const initialState = {
   productLists: [],
@@ -22,6 +22,25 @@ const productListReducer = (state = initialState, action) => {
       return {
         ...state,
         productLists: action.payload,
+      };
+
+    case UPDATE_PRODUCT_LIST:
+      const indexToUpdate = state.productLists.findIndex(product => product._id == action.payload.id);
+      if (indexToUpdate === -1) {
+        return state;
+      }
+
+      const updatedProduct = action.payload.data;
+
+      const updatedProductLists = [
+        ...state.productLists.slice(0, indexToUpdate),
+        {...state.productLists[indexToUpdate], ...updatedProduct}, // updated item
+        ...state.productLists.slice(indexToUpdate + 1),
+      ];
+
+      return {
+        ...state,
+        productLists: updatedProductLists,
       };
 
     default:

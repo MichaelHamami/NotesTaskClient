@@ -12,6 +12,12 @@ const heb = () => {
     save: 'שמור',
     listNameErrorMessage: 'נא לרשום שם לרשימה',
     creatingListErrorToaster: 'כישלון בעת יצירת הרשומה',
+    deleteList: 'מחק רשימה',
+    editName: 'שנה שם',
+    duplicateList: 'שכפל רשימה',
+    save: 'שמור',
+    cancel: 'בטל',
+    copy: 'העתק',
   };
 };
 

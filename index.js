@@ -3,6 +3,7 @@ import {AppRegistry, I18nManager} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import {FingerprintJsProProvider} from '@fingerprintjs/fingerprintjs-pro-react-native';
+import {MenuProvider} from 'react-native-popup-menu';
 import config from './config';
 
 const WrappedApp = () => {
@@ -16,9 +17,11 @@ const WrappedApp = () => {
   }, [isRTL]);
 
   return (
-    <FingerprintJsProProvider apiKey={config.FINGERPRINT_API_KEY} region="en">
-      <App />
-    </FingerprintJsProProvider>
+    <MenuProvider>
+      <FingerprintJsProProvider apiKey={config.FINGERPRINT_API_KEY} region="en">
+        <App />
+      </FingerprintJsProProvider>
+    </MenuProvider>
   );
 };
 

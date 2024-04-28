@@ -12,6 +12,12 @@ const eng = () => {
     save: 'save',
     listNameErrorMessage: 'Please insert list name',
     creatingListErrorToaster: 'Failed to create List',
+    deleteList: 'Delete list',
+    editName: 'Edit Name',
+    duplicateList: 'Duplicate List',
+    save: 'Save',
+    cancel: 'Cancel',
+    copy: 'Copy',
   };
 };
 

@@ -1,16 +1,14 @@
 import React, {useState} from 'react';
-import {View, useWindowDimensions, TouchableOpacity, Text, StyleSheet, StatusBar, Animated} from 'react-native';
+import {View, useWindowDimensions, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-
-const FirstRoute = () => <View style={{flex: 1, backgroundColor: '#ff4081'}} />;
-
-const SecondRoute = () => <View style={{flex: 1, backgroundColor: '#673ab7'}} />;
+import ViewAllProductLists from './ViewAllProductLists';
+import * as Constant from '../../constants';
 
 const renderScene = SceneMap({
-  shoppingList: FirstRoute,
-  productList: SecondRoute,
+  shoppingList: () => <ViewAllProductLists type={Constant.PRODUCT_LIST_TYPE.SHOPPING} />,
+  productList: () => <ViewAllProductLists type={Constant.PRODUCT_LIST_TYPE.HOME} />,
 });
 
 function ProductList({navigation}) {
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     height: 56,
-    backgroundColor: '#183153',
+    backgroundColor: Constant.PRIMARY_COLOR,
   },
   sideButtons: {
     padding: 8,
@@ -81,7 +79,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   tabBar: {
-    backgroundColor: '#183153',
+    backgroundColor: Constant.PRIMARY_COLOR,
   },
 });
 
