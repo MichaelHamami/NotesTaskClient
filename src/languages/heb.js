@@ -18,6 +18,21 @@ const heb = () => {
     save: 'שמור',
     cancel: 'בטל',
     copy: 'העתק',
+    searchListPlaceHolder: 'חפש מוצרים ברשימה',
+    addProduct: 'הוסף מוצר',
+    defaultCategory: 'אחר',
+    unit_type: {
+      1: 'יח',
+      2: 'לב',
+      3: 'חבילה',
+      4: 'גרם',
+      5: 'ליטר',
+    },
+    categoriesNames: {
+      OTHER: 'אחר',
+      CLEANING_SUPPLIES: 'מוצרי ניקוי',
+      DAIRY: 'מוצרי חלב',
+    },
   };
 };
 

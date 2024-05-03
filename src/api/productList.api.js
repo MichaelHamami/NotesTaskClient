@@ -19,3 +19,8 @@ export async function updateProductList(id, data) {
   const response = await api.put('/api/product-list/' + id, data);
   return response.data;
 }
+
+export async function addProductToProductList(id, data) {
+  const response = await api.post(`/api/product-list/${id}/add-product`, data);
+  return response.data;
+}

@@ -18,6 +18,21 @@ const eng = () => {
     save: 'Save',
     cancel: 'Cancel',
     copy: 'Copy',
+    searchListPlaceHolder: 'Search items in the list',
+    addProduct: 'Add Product',
+    defaultCategory: 'other',
+    unit_type: {
+      1: 'each',
+      2: 'lb',
+      3: 'pkg',
+      4: 'oz',
+      5: 'gal',
+    },
+    categoriesNames: {
+      OTHER: 'other',
+      CLEANING_SUPPLIES: 'Cleaning Supplies',
+      DAIRY: 'Dairy',
+    },
   };
 };
 

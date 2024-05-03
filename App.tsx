@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AuthComponent from './src/components/Auth';
 import HomeComponent from './src/components/Home';
 import NotesList from './src/components/NotesList';
+import MainProductList from './src/components/ProductList/MainProductLists';
 import ProductList from './src/components/ProductList/ProductList';
 import CreateList from './src/components/CreateList';
 import store from './src/redux/store';
@@ -18,8 +19,9 @@ function App(): React.JSX.Element {
       <LabelsContextProvider>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="ProductList" component={ProductList} />
             <Stack.Screen name="CreateList" component={CreateList} />
+            <Stack.Screen name="ProductList" component={ProductList} />
+            <Stack.Screen name="MainProductList" component={MainProductList} />
             <Stack.Screen name="NotesList" component={NotesList} />
             <Stack.Screen name="Home" component={HomeComponent} />
             <Stack.Screen name="Login" component={AuthComponent} />

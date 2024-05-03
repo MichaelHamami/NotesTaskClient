@@ -22,6 +22,8 @@ const CreateList = ({navigation}) => {
       value: 1,
     },
   ];
+  // for development
+  navigation.navigate('ProductList', {productListId: '662fdd479dfae87f3e551a8b'});
 
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState(options[0].value); //TODO: selected the option by optional route params
@@ -36,9 +38,8 @@ const CreateList = ({navigation}) => {
     try {
       const body = {name: listName, type: selectedOption};
       const data = await createProductList(body);
-      console.log(data); // {"_id:..."}
       dispatch(ReduxActions.addProductList(data));
-      // TODO: navigate to the selected list by the id
+      navigation.navigate('ProductList', {productListId: data._id});
     } catch (error) {
       console.error('Error creating product list:', error);
       this.toast.show(labels.creatingListErrorToaster, 2000);
@@ -48,7 +49,6 @@ const CreateList = ({navigation}) => {
   };
 
   const handleSaveClicked = () => {
-    console.log('save clicked');
     if (!inputValue || inputValue.trim() === '') {
       this.toast.show(labels.listNameErrorMessage, 2000);
       return null;
@@ -68,7 +68,7 @@ const CreateList = ({navigation}) => {
   const Header = ({title}) => {
     return (
       <View style={headerStyles.headerContainer}>
-        <TouchableOpacity style={headerStyles.backButton} onPress={handlePress}>
+        <TouchableOpacity onPress={handlePress}>
           <Icon name={backIconName} size={20} color="white" />
         </TouchableOpacity>
         <View style={headerStyles.titleContainer}>
