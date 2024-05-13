@@ -16,6 +16,7 @@ const heb = () => {
     editName: 'שנה שם',
     duplicateList: 'שכפל רשימה',
     save: 'שמור',
+    delete: 'מחק',
     cancel: 'בטל',
     copy: 'העתק',
     searchListPlaceHolder: 'חפש מוצרים ברשימה',
@@ -33,6 +34,19 @@ const heb = () => {
       CLEANING_SUPPLIES: 'מוצרי ניקוי',
       DAIRY: 'מוצרי חלב',
     },
+    noItemsTitle: 'הרשימה שלך ריקה',
+    noItemsSubTitle: 'לחץ פה או הקלד מוצר חדש',
+    quantity: 'כמות',
+    unitType: 'סוג כמות',
+    category: 'קטגוריה',
+    description: 'הערות',
+    price: 'מחיר',
+    priceValue: '₪ {{price}}',
+    categories: 'קטגוריות',
+    unitTypes: 'סוגי כמויות',
+    deleteProductTitle: 'האם למחוק את המוצר?',
+    yes: 'כן',
+    no: 'לא',
   };
 };
 

@@ -3,12 +3,14 @@ import {View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProductListByType} from '../../redux/selectors/selector';
 import Toast from 'react-native-easy-toast';
-import * as ReduxActions from '../../redux/actions/productList.actions';
+import * as ProductListActions from '../../redux/actions/productList.actions';
+import * as CategoryActions from '../../redux/actions/category.actions';
 import {getProductLists, deleteProductList, createProductList, updateProductList} from '../../api/productList.api';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import ViewProductList from './ViewProductList';
+import {getCategories} from '../../api/category.api';
 
-const ViewAllProductLists = ({navigation, type}) => {
+const ViewAllProductLists = ({type}) => {
   const labels = useLabelsContext();
   const dispatch = useDispatch();
   const productLists = useSelector(state => getProductListByType(state, type));
@@ -17,13 +19,27 @@ const ViewAllProductLists = ({navigation, type}) => {
   const [isProcessRunning, setIsProcessRunning] = useState(false);
 
   useEffect(() => {
-    fetchProductLists();
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    fetchCategories();
+    fetchProductLists();
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      dispatch(CategoryActions.getCategories(data));
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const fetchProductLists = async () => {
     try {
       const data = await getProductLists();
-      dispatch(ReduxActions.getProductLists(data));
+      dispatch(ProductListActions.getProductLists(data));
     } catch (error) {
       console.error('Error fetching ProductLists:', error); // TODO:USE TOAST
     } finally {
@@ -36,7 +52,7 @@ const ViewAllProductLists = ({navigation, type}) => {
 
     try {
       const data = await deleteProductList(id);
-      dispatch(ReduxActions.deleteProductList(id));
+      dispatch(ProductListActions.deleteProductList(id));
     } catch (error) {
       console.error('Error deleting ProductList:', error); // TODO:USE TOAST
     } finally {
@@ -53,12 +69,12 @@ const ViewAllProductLists = ({navigation, type}) => {
       const body = {
         ...productToDuplicate,
         name: `${productToDuplicate.name} - ${labels.copy}`,
-        items: productToDuplicate.items.map(item => item._id), //TODO: Check if need to be fix
+        items: productToDuplicate.items.map(item => item._id),
         _id: undefined,
       };
 
       const data = await createProductList(body);
-      dispatch(ReduxActions.addProductList(data));
+      dispatch(ProductListActions.addProductList(data));
     } catch (error) {
       console.error('Error duplicating ProductLists', error); // TODO:USE TOAST
     } finally {
@@ -75,7 +91,7 @@ const ViewAllProductLists = ({navigation, type}) => {
       };
 
       const data = await updateProductList(id, body);
-      dispatch(ReduxActions.updateProductList(id, data));
+      dispatch(ProductListActions.updateProductList(id, data));
     } catch (error) {
       console.error('Error updating name of ProductList', error); // TODO:USE TOAST
     } finally {

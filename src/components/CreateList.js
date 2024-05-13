@@ -22,15 +22,15 @@ const CreateList = ({navigation}) => {
       value: 1,
     },
   ];
-  // for development
-  navigation.navigate('ProductList', {productListId: '662fdd479dfae87f3e551a8b'});
 
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState(options[0].value); //TODO: selected the option by optional route params
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePress = () => {};
+  const handlePress = () => {
+    navigation.goBack();
+  };
 
   const createList = async listName => {
     setIsLoading(true);

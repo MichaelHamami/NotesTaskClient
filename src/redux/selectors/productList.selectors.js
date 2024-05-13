@@ -15,3 +15,11 @@ export const getAllItemsFilterByProductId = createSelector([selectProductLists, 
   productLists.filter(productList => productList._id !== id).map(productList => items.push(...productList.items));
   return items;
 });
+
+export const getProductItem = createSelector(
+  [selectProductLists, (_, productListId) => productListId, (_, _productListId, productId) => productId],
+  (productLists, productListId, productId) => {
+    const productList = productLists.find(productList => productList._id === productListId);
+    return productList ? productList.items.find(product => product._id === productId) : null;
+  },
+);

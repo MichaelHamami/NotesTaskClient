@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager, TouchableWithoutFeedback, Image, ImageBackground} from 'react-native';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
@@ -9,15 +9,17 @@ import Toast from 'react-native-easy-toast';
 import * as ReduxActions from '../../redux/actions/productList.actions';
 import {getProductLists, addProductToProductList} from '../../api/productList.api';
 import {getProductListById, getAllItemsFilterByProductId} from '../../redux/selectors/productList.selectors';
-import * as Constant from '../../constants';
 import SuggestionList from './SuggestionList';
 import CheckBox from '@react-native-community/checkbox';
+import * as Constant from '../../constants';
+import cartGif from '../../assets/clown-cart.gif';
 
 const ProductList = ({route, navigation}) => {
   const labels = useLabelsContext();
   const dispatch = useDispatch();
   const productList = useSelector(state => getProductListById(state, route.params.productListId));
   const allItems = useSelector(state => getAllItemsFilterByProductId(state, route.params.productListId));
+  const hasItems = productList.items.length > 0;
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const searchBackIconName = !I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const [isLoading, setIsLoading] = useState(false);
@@ -49,11 +51,15 @@ const ProductList = ({route, navigation}) => {
     navigation.navigate('MainProductList');
   };
 
+  const handleItemPress = productId => {
+    navigation.navigate('ProductItem', {productListId: route.params.productListId, productId: productId});
+  };
+
   useEffect(() => {
-    fetchCategories();
+    fetchProductLists();
   }, [route.params?.productListId]);
 
-  const fetchCategories = async () => {
+  const fetchProductLists = async () => {
     try {
       const data = await getProductLists();
       dispatch(ReduxActions.getProductLists(data));
@@ -77,6 +83,7 @@ const ProductList = ({route, navigation}) => {
   };
 
   const navigateToItems = () => {
+    console.log('navigateToItems');
     // TODO: Navigate to add Item Screen
   };
 
@@ -132,9 +139,12 @@ const ProductList = ({route, navigation}) => {
               onValueChange={() => productSelected(product._id, product.bought)}
               style={categoriesAndItemStyles.checkboxContainer}
             />
-            <View style={categoriesAndItemStyles.itemName}>
-              <Text>{product.name}</Text>
-            </View>
+            <TouchableOpacity style={categoriesAndItemStyles.itemName} onPress={() => handleItemPress(product._id)}>
+              <View>
+                <Text>{product.name}</Text>
+              </View>
+            </TouchableOpacity>
+
             <QuantityView quantity={product.quantity} unit_type={product.unit_type} />
           </View>
         ))}
@@ -162,7 +172,7 @@ const ProductList = ({route, navigation}) => {
               <Icon name="search" size={24} color="white" />
             </TouchableOpacity>
             <Menu>
-              <MenuTrigger style={headerStyles.menuTrigger}>
+              <MenuTrigger>
                 <Icon name="ellipsis-v" size={24} color="white" />
               </MenuTrigger>
               <MenuOptions>
@@ -221,14 +231,25 @@ const ProductList = ({route, navigation}) => {
           </View>
         </View>
       </View>
-
-      <View style={styles.categoriesAndItemsContainer}>
-        {categoriesAndItems.map((category, index) => (
-          <View key={index}>
-            <ListItem {...category} />
-          </View>
-        ))}
-      </View>
+      {hasItems ? (
+        <View style={styles.categoriesAndItemsContainer}>
+          {categoriesAndItems.map((category, index) => (
+            <View key={index}>
+              <ListItem {...category} />
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View style={noItemsStyles.container}>
+          <TouchableWithoutFeedback onPress={navigateToItems}>
+            <View style={noItemsStyles.box}>
+              <Text style={noItemsStyles.textStyle}>{labels.noItemsTitle}</Text>
+              <Text style={noItemsStyles.textStyle}>{labels.noItemsSubTitle}</Text>
+              <ImageBackground source={cartGif} style={noItemsStyles.gif}></ImageBackground>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
       <Toast
         ref={toast => (this.toast = toast)}
         style={{backgroundColor: 'red'}}
@@ -242,8 +263,35 @@ const ProductList = ({route, navigation}) => {
   );
 };
 
+const noItemsStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingTop: 40,
+    backgroundColor: 'white',
+  },
+  box: {
+    width: 300,
+    height: 300,
+    borderRadius: 10,
+    backgroundColor: 'black',
+    alignItems: 'center',
+  },
+  textStyle: {
+    color: 'white',
+    padding: 10,
+  },
+  gif: {
+    width: 150,
+    height: 150,
+  },
+});
+
 const quantityStyles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     flexDirection: 'column',
     padding: 5,
   },
@@ -343,7 +391,7 @@ const headerStyles = StyleSheet.create({
     color: 'white',
   },
   buttonContainer: {
-    gap: 15,
+    gap: 20,
     alignItems: 'center',
     flexDirection: 'row',
   },

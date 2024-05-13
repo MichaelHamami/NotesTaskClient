@@ -10,6 +10,7 @@ const eng = () => {
     shopping: 'Shopping',
     products: 'Products',
     save: 'save',
+    delete: 'delete',
     listNameErrorMessage: 'Please insert list name',
     creatingListErrorToaster: 'Failed to create List',
     deleteList: 'Delete list',
@@ -33,6 +34,19 @@ const eng = () => {
       CLEANING_SUPPLIES: 'Cleaning Supplies',
       DAIRY: 'Dairy',
     },
+    noItemsTitle: 'Your list is empty',
+    noItemsSubTitle: 'Click here or type a new product',
+    quantity: 'Quantity',
+    unitType: 'Unit Type',
+    category: 'Category',
+    description: 'Description',
+    price: 'Price',
+    priceValue: '$ {{price}}',
+    categories: 'Categories',
+    unitTypes: 'Unit Types',
+    deleteProductTitle: 'Are you sure you want to delete this product',
+    yes: 'Yes',
+    no: 'No',
   };
 };
 

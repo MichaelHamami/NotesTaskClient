@@ -3,10 +3,13 @@ import {View, Text, StyleSheet, TextInput, Dimensions, TouchableOpacity} from 'r
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from '@react-navigation/native';
 import * as Constant from '../../constants';
 
 const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => {
   const labels = useLabelsContext();
+  const navigation = useNavigation();
+
   const {name, items} = productList;
   const {width, height} = Dimensions.get('window');
   const borderRadius = (Math.min(width, height) * 50) / 100;
@@ -14,6 +17,11 @@ const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => 
   const customStyle = {
     borderRadius: borderRadius,
   };
+
+  const numOfBoughtItems = items?.reduce((acc, item) => {
+    const numToAdd = item.bought ? 1 : 0;
+    return acc + numToAdd;
+  }, 0);
 
   const [newName, setNewName] = useState(false);
 
@@ -39,29 +47,35 @@ const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => 
     setNewName(false);
   };
 
+  const handleProductClick = () => {
+    navigation.navigate('ProductList', {productListId: productList._id});
+  };
+
   return (
     <View style={styles.productListRow}>
-      <View style={styles.circleAndNameContainer}>
-        <View style={[styles.circle, customStyle]}>
-          <Text>{items.length}</Text>
-          <Text>{'/'}</Text>
-          <Text>{`${55}`}</Text>
+      <TouchableOpacity style={styles.circleAndNameContainer} onPress={handleProductClick} disabled={isLoading}>
+        <View style={styles.circleAndNameContainer}>
+          <View style={[styles.circle, customStyle]}>
+            <Text>{items.length}</Text>
+            <Text>{'/'}</Text>
+            <Text>{numOfBoughtItems}</Text>
+          </View>
+          {newName === false ? (
+            <Text style={styles.listName}>{name}</Text>
+          ) : (
+            <TextInput
+              style={{
+                borderColor: 'black',
+                borderBottomWidth: 1,
+                flex: 1,
+                color: Constant.PRIMARY_COLOR,
+              }}
+              value={newName}
+              onChangeText={text => setNewName(text)}
+            />
+          )}
         </View>
-        {newName === false ? (
-          <Text style={styles.listName}>{name}</Text>
-        ) : (
-          <TextInput
-            style={{
-              borderColor: 'black',
-              borderBottomWidth: 1,
-              flex: 1,
-              color: Constant.PRIMARY_COLOR,
-            }}
-            value={newName}
-            onChangeText={text => setNewName(text)}
-          />
-        )}
-      </View>
+      </TouchableOpacity>
       {newName === false ? (
         <Menu>
           <MenuTrigger style={styles.menuTrigger}>
