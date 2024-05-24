@@ -20,13 +20,13 @@ function App(): React.JSX.Element {
       <LabelsContextProvider>
         <NavigationContainer>
           <Stack.Navigator>
+            <Stack.Screen name="Login" component={AuthComponent} />
             <Stack.Screen name="MainProductList" component={MainProductList} />
             <Stack.Screen name="ProductItem" component={ProductItem} />
             <Stack.Screen name="CreateList" component={CreateList} />
             <Stack.Screen name="ProductList" component={ProductList} />
             <Stack.Screen name="NotesList" component={NotesList} />
             <Stack.Screen name="Home" component={HomeComponent} />
-            <Stack.Screen name="Login" component={AuthComponent} />
           </Stack.Navigator>
         </NavigationContainer>
       </LabelsContextProvider>

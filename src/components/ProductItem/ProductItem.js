@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager, Modal} from 'react-native';
-import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
+import {View, ScrollView, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -23,6 +22,7 @@ const ProductItem = ({route, navigation}) => {
   const productList = useSelector(state => getProductListById(state, route.params.productListId));
   const product = useSelector(state => getProductItem(state, route.params.productListId, route.params.productId));
   const categories = useSelector(selectCategories);
+  const isHomeProductList = productList?.type === Constant.PRODUCT_LIST_TYPE.HOME;
   // console.log('productListId:', route.params.productListId, ' ProductItem', product);
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +31,7 @@ const ProductItem = ({route, navigation}) => {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [unitTypeModalVisible, setUnitTypeModalVisible] = useState(false);
   const [areYouSureModalVisible, setAreYouSureModalVisible] = useState(false);
+  const [currentQuantity, setCurrentQuantity] = useState(product?.current_quantity ?? 0);
 
   const [category, setCategory] = useState(product?.category);
   const [unitType, setUnitType] = useState(product?.unit_type ?? 1);
@@ -116,6 +117,17 @@ const ProductItem = ({route, navigation}) => {
     });
   };
 
+  const addCurrentQuantity = () => {
+    setCurrentQuantity(prevState => prevState + 1);
+  };
+
+  const removeCurrentQuantity = () => {
+    setCurrentQuantity(prevState => {
+      if (prevState <= 0) return 0;
+      return prevState - 1;
+    });
+  };
+
   const saveItem = async () => {
     const data = {
       name: addItemNameValue,
@@ -124,6 +136,11 @@ const ProductItem = ({route, navigation}) => {
       unit_type: unitType,
       description: description,
     };
+
+    if (isHomeProductList) {
+      data.current_quantity = currentQuantity;
+    }
+
     const updatedData = await updateProduct(product._id, data);
 
     const itemIndex = productList.items.findIndex(item => item._id === product._id);
@@ -149,36 +166,10 @@ const ProductItem = ({route, navigation}) => {
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style={styles.headerContainer}>
-        <View style={headerItemStyles.flexStart}>
-          <TouchableOpacity onPress={handleBackPress}>
-            <Icon name={backIconName} size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-        <View style={headerItemStyles.titleContainer}>
-          <TextInput style={headerItemStyles.title} value={addItemNameValue} onChangeText={handleNameChange} />
-        </View>
-        <View>
-          <Menu>
-            <MenuTrigger>
-              <Icon name="ellipsis-v" size={24} color="white" />
-            </MenuTrigger>
-            <MenuOptions>
-              <MenuOption onSelect={() => {}} disabled={isLoading} style>
-                <Text style={{color: 'black'}}>{labels.deleteList}</Text>
-              </MenuOption>
-              <View style={headerItemStyles.divider}></View>
-              <MenuOption onSelect={() => {}} disabled={isLoading}>
-                <Text style={{color: 'black'}}>{labels.duplicateList}</Text>
-              </MenuOption>
-              <View style={headerItemStyles.divider}></View>
-
-              <MenuOption onSelect={() => {}} disabled={isLoading}>
-                <Text style={{color: 'black'}}>{labels.editName}</Text>
-              </MenuOption>
-              <View style={headerItemStyles.divider}></View>
-            </MenuOptions>
-          </Menu>
-        </View>
+        <TouchableOpacity onPress={handleBackPress}>
+          <Icon name={backIconName} size={20} color="white" />
+        </TouchableOpacity>
+        <TextInput style={headerItemStyles.title} value={addItemNameValue} onChangeText={handleNameChange} />
       </View>
 
       <ScrollView>
@@ -187,7 +178,7 @@ const ProductItem = ({route, navigation}) => {
             <View style={[styles.rowPart, {borderEndWidth: 1, borderEndColor: 'black'}]}>
               <ClickableIcon iconName={'add'} onPress={addQuantity} iconColor={'black'} />
               <LabelWithValue label={labels.quantity} value={productQuantity} />
-              <ClickableIcon iconName={'remove'} onPress={removeQuantity} />
+              <ClickableIcon iconName={'remove'} onPress={removeCurrentQuantity} />
             </View>
             <View style={styles.rowPart}>
               <TouchableOpacity onPress={() => setUnitTypeModalVisible(true)}>
@@ -195,6 +186,20 @@ const ProductItem = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
+
+          {isHomeProductList && (
+            <View style={[styles.rowContainer]}>
+              <View style={[styles.rowPart]}>
+                <Text>{labels.currentQuantityAtHome}</Text>
+              </View>
+
+              <View style={[styles.rowPart]}>
+                <ClickableIcon iconName={'add'} onPress={addCurrentQuantity} iconColor={'black'} />
+                <LabelWithValue label={labels.quantity} value={currentQuantity} />
+                <ClickableIcon iconName={'remove'} onPress={removeCurrentQuantity} />
+              </View>
+            </View>
+          )}
 
           <View style={[styles.rowContainer, {justifyContent: 'space-between'}]}>
             <Text>{labels.category}</Text>
@@ -220,6 +225,7 @@ const ProductItem = ({route, navigation}) => {
           <Text style={{color: 'black'}}>{labels.delete}</Text>
         </TouchableOpacity>
       </View>
+
       <OptionsModal
         options={categoriesOptions}
         title={labels.categories}
@@ -250,12 +256,14 @@ const ProductItem = ({route, navigation}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: Constant.PRIMARY_COLOR,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    height: '30%',
+    gap: 20,
+    maxHeight: '15%',
     minHeight: 50,
   },
   propertiesContainer: {
@@ -264,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'column',
     gap: 20,
-    height: '55%',
+    height: '75%',
     paddingHorizontal: '5%',
   },
   rowContainer: {
@@ -285,7 +293,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    maxHeight: 200, // Adjust the max height to control the visible area
+    maxHeight: 200,
   },
   buttonsContainer: {
     height: '15%',
@@ -309,21 +317,11 @@ const styles = StyleSheet.create({
 });
 
 const headerItemStyles = StyleSheet.create({
-  titleContainer: {
-    gap: 10,
-    flexDirection: 'row',
-    color: 'white',
-  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'white',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'black',
-    width: '100%',
   },
 });
 

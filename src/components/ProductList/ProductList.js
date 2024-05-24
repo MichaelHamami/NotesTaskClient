@@ -1,25 +1,35 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager, TouchableWithoutFeedback, Image, ImageBackground} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager, TouchableWithoutFeedback, ImageBackground} from 'react-native';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-easy-toast';
-import * as ReduxActions from '../../redux/actions/productList.actions';
-import {getProductLists, addProductToProductList} from '../../api/productList.api';
+import * as ProductListActions from '../../redux/actions/productList.actions';
+import {
+  getProductLists,
+  addProductToProductList,
+  deleteProductList,
+  duplicateProductList,
+  updateProductListItems,
+  deleteProductListItems,
+} from '../../api/productList.api';
 import {getProductListById, getAllItemsFilterByProductId} from '../../redux/selectors/productList.selectors';
 import SuggestionList from './SuggestionList';
 import CheckBox from '@react-native-community/checkbox';
-import * as Constant from '../../constants';
 import cartGif from '../../assets/clown-cart.gif';
+import {BOUGHT_LIST_ID} from './ProductList.helper';
+import useProductList from './useProductList';
+import * as Constant from '../../constants';
 
 const ProductList = ({route, navigation}) => {
   const labels = useLabelsContext();
   const dispatch = useDispatch();
   const productList = useSelector(state => getProductListById(state, route.params.productListId));
   const allItems = useSelector(state => getAllItemsFilterByProductId(state, route.params.productListId));
-  const hasItems = productList.items.length > 0;
+  const {handleProductUpdate} = useProductList();
+  const hasItems = productList?.items?.length > 0;
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const searchBackIconName = !I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const [isLoading, setIsLoading] = useState(false);
@@ -27,19 +37,39 @@ const ProductList = ({route, navigation}) => {
   const [editMode, setEditMode] = useState(false);
   const [addItemNameValue, setAddItemNameValue] = useState('');
   const showSuggestions = addItemNameValue.length > 1;
-  const categoriesAndItems = getCategoriesWithItems();
 
-  function getCategoriesWithItems() {
-    let categoriesAndItems = {};
+  const categoriesAndItems = useMemo(() => {
+    return getCategoriesWithItems(searchValue ? productList?.items.filter(item => item.name.includes(searchValue)) : productList?.items);
+  }, [searchValue, productList?.items]);
 
-    productList?.items.forEach(product => {
+  function getCategoriesWithItems(searchedItems) {
+    if (!searchedItems || searchedItems.length === 0) return [];
+
+    let categoriesAndItems = {
+      [BOUGHT_LIST_ID]: {
+        _id: BOUGHT_LIST_ID,
+        name: labels.boughtListName,
+        isSystem: false,
+        color: '#000000',
+        items: [],
+      },
+    };
+
+    searchedItems.forEach(product => {
+      if (product.bought) {
+        categoriesAndItems[BOUGHT_LIST_ID].items.push({...product, category: undefined});
+        return;
+      }
+
       if (!categoriesAndItems[product.category._id]) {
         categoriesAndItems[product.category._id] = {...product.category, items: []};
       }
       categoriesAndItems[product.category._id].items.push({...product, category: undefined});
     });
 
-    return Object.values(categoriesAndItems);
+    if (categoriesAndItems[BOUGHT_LIST_ID].items.length === 0) delete categoriesAndItems[BOUGHT_LIST_ID];
+
+    return Object.values(categoriesAndItems).sort((a, b) => a._id.localeCompare(b._id));
   }
 
   const suggestions = useMemo(() => {
@@ -62,7 +92,7 @@ const ProductList = ({route, navigation}) => {
   const fetchProductLists = async () => {
     try {
       const data = await getProductLists();
-      dispatch(ReduxActions.getProductLists(data));
+      dispatch(ProductListActions.getProductLists(data));
     } catch (error) {
       console.error('Error fetching ProductLists:', error); // TODO:USE TOAST
     } finally {
@@ -87,12 +117,42 @@ const ProductList = ({route, navigation}) => {
     // TODO: Navigate to add Item Screen
   };
 
+  const handleDeleteProductList = async id => {
+    setIsLoading(true);
+
+    try {
+      await deleteProductList(id);
+      dispatch(ProductListActions.deleteProductList(id));
+      setIsLoading(false);
+      navigation.navigate('MainProductList');
+    } catch (error) {
+      console.error('Error deleting ProductList:', error); // TODO:USE TOAST
+      setIsLoading(false);
+    }
+  };
+
+  const handleDuplicateProductList = async () => {
+    setIsLoading(true);
+
+    try {
+      const data = await duplicateProductList(productList._id, `${productList.name} - ${labels.copy}`);
+      dispatch(ProductListActions.addProductList(data));
+
+      setIsLoading(false);
+      navigation.navigate('ProductList', {productListId: data._id});
+    } catch (error) {
+      console.error('Error duplicating ProductLists', error); // TODO:USE TOAST
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleAddItem = async () => {
     console.log('Add Item', addItemNameValue);
     try {
       const body = {name: addItemNameValue};
       const data = await addProductToProductList(route.params.productListId, body);
-      dispatch(ReduxActions.updateProductList(route.params.productListId, data));
+      dispatch(ProductListActions.updateProductList(route.params.productListId, data));
     } catch (error) {
       console.error('Error addProductToProductList:', error); // TODO:USE TOAST
     } finally {
@@ -101,8 +161,8 @@ const ProductList = ({route, navigation}) => {
     }
   };
 
-  const productSelected = (id, currentValue) => {
-    console.log('productSelected -id:', id, ' currentValue:', currentValue);
+  const productSelected = async (id, currentValue) => {
+    await handleProductUpdate(id, {bought: !currentValue}, productList);
   };
 
   const QuantityView = ({quantity, unit_type}) => {
@@ -120,19 +180,48 @@ const ProductList = ({route, navigation}) => {
     return labels.categoriesNames[labelName];
   };
 
-  const ListItem = ({name, items, color, isSystem}) => {
+  const handleBackItemsToList = async items => {
+    const itemsIds = items.map(item => item._id);
+    const productListUpdated = await updateProductListItems(productList._id, itemsIds, {bought: false});
+    dispatch(ProductListActions.updateProductList(productList._id, productListUpdated));
+  };
+
+  const deleteBoughtItems = async items => {
+    const itemsIds = items.map(item => item._id);
+    const productListUpdated = await deleteProductListItems(productList._id, itemsIds);
+    dispatch(ProductListActions.updateProductList(productList._id, productListUpdated));
+  };
+
+  const ListItem = ({name, items, color, isSystem, isBoughtList}) => {
     return (
       <View style={categoriesAndItemStyles.container}>
         <View style={categoriesAndItemStyles.header}>
           <IconMaterial name={'add'} size={20} color={color} />
           <Text style={[categoriesAndItemStyles.label, {color: color}]}>{getCategoryName(name, isSystem)} </Text>
         </View>
+
+        {isBoughtList && (
+          <View style={[categoriesAndItemStyles.boughtSection]}>
+            <TouchableOpacity
+              onPress={() => handleBackItemsToList(items)}
+              style={[categoriesAndItemStyles.boughtPart, {borderBlockEndColor: 'black', borderEndWidth: 1}]}>
+              <IconMaterial name={'settings-backup-restore'} size={20} color={'black'} />
+              <Text>{labels.backToList} </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => deleteBoughtItems(items)} style={categoriesAndItemStyles.boughtPart}>
+              <IconMaterial name={'delete'} size={20} color={'black'} />
+              <Text> {labels.deleteBoughtList}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {items.map((product, index) => (
           <View
             key={index}
             style={[
               categoriesAndItemStyles.subItem,
-              index === 0 && {borderStartColor: color, borderStartWidth: 2, borderTopColor: color, borderTopWidth: 2},
+              index === 0 && {borderStartColor: color, borderStartWidth: 1, borderTopColor: color, borderTopWidth: 2},
             ]}>
             <CheckBox
               value={product.bought}
@@ -176,18 +265,13 @@ const ProductList = ({route, navigation}) => {
                 <Icon name="ellipsis-v" size={24} color="white" />
               </MenuTrigger>
               <MenuOptions>
-                <MenuOption onSelect={() => {}} disabled={isLoading} style>
+                <MenuOption onSelect={() => handleDeleteProductList(productList?._id)} disabled={isLoading} style>
                   <Text style={{color: 'black'}}>{labels.deleteList}</Text>
                 </MenuOption>
                 <View style={headerStyles.divider}></View>
 
-                <MenuOption onSelect={() => {}} disabled={isLoading}>
+                <MenuOption onSelect={handleDuplicateProductList} disabled={isLoading}>
                   <Text style={{color: 'black'}}>{labels.duplicateList}</Text>
-                </MenuOption>
-                <View style={headerStyles.divider}></View>
-
-                <MenuOption onSelect={() => {}} disabled={isLoading}>
-                  <Text style={{color: 'black'}}>{labels.editName}</Text>
                 </MenuOption>
                 <View style={headerStyles.divider}></View>
               </MenuOptions>
@@ -235,7 +319,7 @@ const ProductList = ({route, navigation}) => {
         <View style={styles.categoriesAndItemsContainer}>
           {categoriesAndItems.map((category, index) => (
             <View key={index}>
-              <ListItem {...category} />
+              <ListItem {...category} isBoughtList={category._id === BOUGHT_LIST_ID} />
             </View>
           ))}
         </View>
@@ -305,6 +389,19 @@ const categoriesAndItemStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     height: 40,
+  },
+  boughtSection: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderTopColor: 'black',
+    width: '100%',
+    justifyContent: 'space-evenly',
+  },
+  boughtPart: {
+    padding: 20,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 20,
   },
   label: {
     fontSize: 18,

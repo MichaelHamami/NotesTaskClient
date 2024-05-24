@@ -24,3 +24,19 @@ export async function addProductToProductList(id, data) {
   const response = await api.post(`/api/product-list/${id}/add-product`, data);
   return response.data;
 }
+
+export async function duplicateProductList(id, name) {
+  const response = await api.post(`/api/product-list/${id}/duplicate`, {name});
+  return response.data;
+}
+
+export async function updateProductListItems(id, itemIds, data) {
+  const body = {itemIds: itemIds, itemData: data};
+  const response = await api.patch(`/api/product-list/${id}/batch-update`, body);
+  return response.data;
+}
+
+export async function deleteProductListItems(id, itemIds) {
+  const response = await api.patch(`/api/product-list/${id}/batch-delete`, {itemIds});
+  return response.data;
+}

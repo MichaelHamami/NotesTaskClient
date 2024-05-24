@@ -1,8 +1,6 @@
 import axiosInstance from './api';
 
 export async function signUp(fingerprint) {
-  console.log('signUp called in api', fingerprint);
-
   const data = {
     fingerPrint: fingerprint,
   };
@@ -12,7 +10,6 @@ export async function signUp(fingerprint) {
 }
 
 export async function login(fingerprint) {
-  console.log('logIn called in api', fingerprint);
   const data = {
     fingerPrint: fingerprint,
   };

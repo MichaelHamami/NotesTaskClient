@@ -30,13 +30,13 @@ const AuthComponent = ({navigation}) => {
 
       if (isSupported) {
         const touchIDResponse = await TouchID.authenticate('Authenticate with Touch ID', optionalConfigObject);
-        if (touchIDResponse && data.visitorFound) {
+        if (touchIDResponse && data?.visitorId) {
           performLoginOrSignup(isLogin, data.visitorId);
         } else {
           Alert.alert('Authentication Failed', 'Please try again or enter your username and passworasdasd.');
         }
       } else {
-        Alert.alert('Touch ID Not Supported', 'Please enter your username and password.');
+        Alert.alert('Touch ID Not Supported', 'Please login with your email and password.');
       }
     } catch (error) {
       console.error('Touch ID Error:', error);
@@ -45,12 +45,9 @@ const AuthComponent = ({navigation}) => {
   };
 
   const performLoginOrSignup = async (isLogin, fingerprint) => {
-    console.log(`'Performing ${isLogin ? 'login' : 'signup'}...'`);
     try {
-      const response = (await isLogin) ? login(fingerprint) : signUp(fingerprint);
-
-      console.log('request successful:', response);
-      navigation.navigate('Home');
+      const response = isLogin ? await login(fingerprint) : await signUp(fingerprint);
+      navigation.navigate('MainProductList');
     } catch (error) {
       console.log('request failed:', error);
     }

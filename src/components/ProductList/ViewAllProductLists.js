@@ -5,7 +5,7 @@ import {getProductListByType} from '../../redux/selectors/selector';
 import Toast from 'react-native-easy-toast';
 import * as ProductListActions from '../../redux/actions/productList.actions';
 import * as CategoryActions from '../../redux/actions/category.actions';
-import {getProductLists, deleteProductList, createProductList, updateProductList} from '../../api/productList.api';
+import {getProductLists, deleteProductList, updateProductList, duplicateProductList} from '../../api/productList.api';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import ViewProductList from './ViewProductList';
 import {getCategories} from '../../api/category.api';
@@ -66,14 +66,8 @@ const ViewAllProductLists = ({type}) => {
     try {
       const productToDuplicate = productLists.find(productList => productList._id === id);
       if (!productToDuplicate) throw Error('Not found product to duplicate');
-      const body = {
-        ...productToDuplicate,
-        name: `${productToDuplicate.name} - ${labels.copy}`,
-        items: productToDuplicate.items.map(item => item._id),
-        _id: undefined,
-      };
 
-      const data = await createProductList(body);
+      const data = await duplicateProductList(productToDuplicate._id, `${productToDuplicate.name} - ${labels.copy}`);
       dispatch(ProductListActions.addProductList(data));
     } catch (error) {
       console.error('Error duplicating ProductLists', error); // TODO:USE TOAST

@@ -21,7 +21,7 @@ const eng = () => {
     copy: 'Copy',
     searchListPlaceHolder: 'Search items in the list',
     addProduct: 'Add Product',
-    defaultCategory: 'other',
+    defaultCategory: 'Other',
     unit_type: {
       1: 'each',
       2: 'lb',
@@ -30,7 +30,7 @@ const eng = () => {
       5: 'gal',
     },
     categoriesNames: {
-      OTHER: 'other',
+      OTHER: 'Other',
       CLEANING_SUPPLIES: 'Cleaning Supplies',
       DAIRY: 'Dairy',
     },
@@ -47,6 +47,10 @@ const eng = () => {
     deleteProductTitle: 'Are you sure you want to delete this product',
     yes: 'Yes',
     no: 'No',
+    boughtListName: 'Shopping cart',
+    backToList: 'Return to list',
+    deleteBoughtList: 'Delete Bought List',
+    currentQuantityAtHome: 'Current Quantity of Product',
   };
 };
 

@@ -47,6 +47,10 @@ const heb = () => {
     deleteProductTitle: 'האם למחוק את המוצר?',
     yes: 'כן',
     no: 'לא',
+    boughtListName: 'סל קניות',
+    backToList: 'החזר לרשימה',
+    deleteBoughtList: 'מחק סל קניות',
+    currentQuantityAtHome: 'כמות המוצר בבית',
   };
 };
 
