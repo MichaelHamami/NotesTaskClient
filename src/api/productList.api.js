@@ -40,3 +40,8 @@ export async function deleteProductListItems(id, itemIds) {
   const response = await api.patch(`/api/product-list/${id}/batch-delete`, {itemIds});
   return response.data;
 }
+
+export async function generateRelativeProductList(id, name) {
+  const response = await api.post(`/api/product-list/${id}/relative-shopping-list`, {name});
+  return response.data;
+}

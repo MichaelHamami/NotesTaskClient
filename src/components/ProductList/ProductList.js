@@ -1,5 +1,16 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager, TouchableWithoutFeedback, ImageBackground} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  TextInput,
+  I18nManager,
+  TouchableWithoutFeedback,
+  ImageBackground,
+  Button,
+  ScrollView,
+} from 'react-native';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
@@ -28,7 +39,8 @@ const ProductList = ({route, navigation}) => {
   const dispatch = useDispatch();
   const productList = useSelector(state => getProductListById(state, route.params.productListId));
   const allItems = useSelector(state => getAllItemsFilterByProductId(state, route.params.productListId));
-  const {handleProductUpdate} = useProductList();
+  const isHomeProductList = productList?.type === Constant.PRODUCT_LIST_TYPE.HOME;
+  const {handleProductUpdate, calculateShoppingProductList} = useProductList();
   const hasItems = productList?.items?.length > 0;
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
   const searchBackIconName = !I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
@@ -56,7 +68,7 @@ const ProductList = ({route, navigation}) => {
     };
 
     searchedItems.forEach(product => {
-      if (product.bought) {
+      if (product.bought && !isHomeProductList) {
         categoriesAndItems[BOUGHT_LIST_ID].items.push({...product, category: undefined});
         return;
       }
@@ -148,7 +160,6 @@ const ProductList = ({route, navigation}) => {
   };
 
   const handleAddItem = async () => {
-    console.log('Add Item', addItemNameValue);
     try {
       const body = {name: addItemNameValue};
       const data = await addProductToProductList(route.params.productListId, body);
@@ -181,15 +192,19 @@ const ProductList = ({route, navigation}) => {
   };
 
   const handleBackItemsToList = async items => {
-    const itemsIds = items.map(item => item._id);
-    const productListUpdated = await updateProductListItems(productList._id, itemsIds, {bought: false});
-    dispatch(ProductListActions.updateProductList(productList._id, productListUpdated));
+    try {
+      const itemsIds = items.map(item => item._id);
+      const productListUpdated = await updateProductListItems(productList._id, itemsIds, {bought: false});
+      dispatch(ProductListActions.updateProductList(productList._id, productListUpdated));
+    } catch (error) {}
   };
 
   const deleteBoughtItems = async items => {
-    const itemsIds = items.map(item => item._id);
-    const productListUpdated = await deleteProductListItems(productList._id, itemsIds);
-    dispatch(ProductListActions.updateProductList(productList._id, productListUpdated));
+    try {
+      const itemsIds = items.map(item => item._id);
+      const productListUpdated = await deleteProductListItems(productList._id, itemsIds);
+      dispatch(ProductListActions.updateProductList(productList._id, productListUpdated));
+    } catch (error) {}
   };
 
   const ListItem = ({name, items, color, isSystem, isBoughtList}) => {
@@ -216,27 +231,38 @@ const ProductList = ({route, navigation}) => {
           </View>
         )}
 
-        {items.map((product, index) => (
-          <View
-            key={index}
-            style={[
-              categoriesAndItemStyles.subItem,
-              index === 0 && {borderStartColor: color, borderStartWidth: 1, borderTopColor: color, borderTopWidth: 2},
-            ]}>
-            <CheckBox
-              value={product.bought}
-              onValueChange={() => productSelected(product._id, product.bought)}
-              style={categoriesAndItemStyles.checkboxContainer}
-            />
-            <TouchableOpacity style={categoriesAndItemStyles.itemName} onPress={() => handleItemPress(product._id)}>
-              <View>
-                <Text>{product.name}</Text>
-              </View>
-            </TouchableOpacity>
+        <View>
+          {items.map((product, index) => (
+            <View
+              key={index}
+              style={[
+                categoriesAndItemStyles.subItem,
+                index === 0 && {borderStartColor: color, borderStartWidth: 1, borderTopColor: color, borderTopWidth: 2},
+                isHomeProductList && {paddingStart: 10},
+              ]}>
+              {!isHomeProductList && (
+                <CheckBox
+                  value={product.bought}
+                  onValueChange={() => productSelected(product._id, product.bought)}
+                  style={categoriesAndItemStyles.checkboxContainer}
+                />
+              )}
+              <TouchableOpacity style={categoriesAndItemStyles.itemName} onPress={() => handleItemPress(product._id)}>
+                <View>
+                  <Text>{product.name}</Text>
+                </View>
+              </TouchableOpacity>
 
-            <QuantityView quantity={product.quantity} unit_type={product.unit_type} />
+              <QuantityView quantity={product.quantity} unit_type={product.unit_type} />
+            </View>
+          ))}
+        </View>
+
+        {isHomeProductList && (
+          <View style={categoriesAndItemStyles.homeFooter}>
+            <Button title={labels.generateShoppingList} onPress={() => calculateShoppingProductList(productList, navigation)} color={'red'} />
           </View>
-        ))}
+        )}
       </View>
     );
   };
@@ -274,6 +300,14 @@ const ProductList = ({route, navigation}) => {
                   <Text style={{color: 'black'}}>{labels.duplicateList}</Text>
                 </MenuOption>
                 <View style={headerStyles.divider}></View>
+                {isHomeProductList && (
+                  <>
+                    <MenuOption onSelect={() => calculateShoppingProductList(productList)} disabled={isLoading}>
+                      <Text style={{color: 'black'}}>{labels.generateShoppingList}</Text>
+                    </MenuOption>
+                    <View style={headerStyles.divider}></View>
+                  </>
+                )}
               </MenuOptions>
             </Menu>
           </View>
@@ -316,13 +350,15 @@ const ProductList = ({route, navigation}) => {
         </View>
       </View>
       {hasItems ? (
-        <View style={styles.categoriesAndItemsContainer}>
-          {categoriesAndItems.map((category, index) => (
-            <View key={index}>
-              <ListItem {...category} isBoughtList={category._id === BOUGHT_LIST_ID} />
-            </View>
-          ))}
-        </View>
+        <ScrollView>
+          <View style={styles.categoriesAndItemsContainer}>
+            {categoriesAndItems.map((category, index) => (
+              <View key={index}>
+                <ListItem {...category} isBoughtList={category._id === BOUGHT_LIST_ID} />
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       ) : (
         <View style={noItemsStyles.container}>
           <TouchableWithoutFeedback onPress={navigateToItems}>
@@ -422,6 +458,15 @@ const categoriesAndItemStyles = StyleSheet.create({
   },
   itemName: {
     width: '60%',
+  },
+  homeFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginLeft: -20,
+    marginTop: 10,
+    width: '100%',
+    height: 40,
   },
 });
 

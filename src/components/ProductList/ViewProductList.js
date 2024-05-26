@@ -4,13 +4,15 @@ import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-men
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
+import useProductList from './useProductList';
 import * as Constant from '../../constants';
 
 const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => {
   const labels = useLabelsContext();
   const navigation = useNavigation();
-
+  const {calculateShoppingProductList} = useProductList();
   const {name, items} = productList;
+  const isHomeProductList = productList?.type === Constant.PRODUCT_LIST_TYPE.HOME;
   const {width, height} = Dimensions.get('window');
   const borderRadius = (Math.min(width, height) * 50) / 100;
   const [isLoading, setIsLoading] = useState(false);
@@ -96,6 +98,14 @@ const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => 
               <Text style={{color: 'black'}}>{labels.editName}</Text>
             </MenuOption>
             <View style={styles.divider}></View>
+            {isHomeProductList && (
+              <>
+                <MenuOption onSelect={() => calculateShoppingProductList(productList, navigation)} disabled={isLoading}>
+                  <Text style={{color: 'black'}}>{labels.generateShoppingList}</Text>
+                </MenuOption>
+                <View style={styles.divider}></View>
+              </>
+            )}
           </MenuOptions>
         </Menu>
       ) : (

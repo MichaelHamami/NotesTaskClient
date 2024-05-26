@@ -1,6 +1,7 @@
 import {useDispatch} from 'react-redux';
 import {updateProduct} from '../../api/product.api';
 import * as ProductListActions from '../../redux/actions/productList.actions';
+import {generateRelativeProductList} from '../../api/productList.api';
 
 const useProductList = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,25 @@ const useProductList = () => {
     }
   };
 
-  return {handleProductUpdate};
+  const calculateShoppingProductList = async (productList, navigation) => {
+    try {
+      const date = new Date();
+      const formattedDate = new Intl.DateTimeFormat({
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+      }).format(date);
+
+      const generatedName = `${productList.name}_${formattedDate}`;
+      const newProductList = await generateRelativeProductList(productList._id, generatedName);
+      dispatch(ProductListActions.addProductList(newProductList));
+      navigation.navigate('ProductList', {productListId: newProductList._id});
+    } catch (error) {
+      return false;
+    }
+  };
+
+  return {handleProductUpdate, calculateShoppingProductList};
 };
 
 export default useProductList;

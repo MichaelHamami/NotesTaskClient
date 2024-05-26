@@ -51,6 +51,7 @@ const eng = () => {
     backToList: 'Return to list',
     deleteBoughtList: 'Delete Bought List',
     currentQuantityAtHome: 'Current Quantity of Product',
+    generateShoppingList: 'Generate shopping list',
   };
 };
 

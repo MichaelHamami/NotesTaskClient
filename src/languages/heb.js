@@ -51,6 +51,7 @@ const heb = () => {
     backToList: 'החזר לרשימה',
     deleteBoughtList: 'מחק סל קניות',
     currentQuantityAtHome: 'כמות המוצר בבית',
+    generateShoppingList: 'יצירת רשימת קניות',
   };
 };
 
