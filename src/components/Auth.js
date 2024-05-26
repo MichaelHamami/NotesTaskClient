@@ -3,8 +3,10 @@ import {View, Button, Alert} from 'react-native';
 import TouchID from 'react-native-touch-id';
 import {useVisitorData} from '@fingerprintjs/fingerprintjs-pro-react-native';
 import {signUp, login} from '../api/auth.api';
+import {useLabelsContext} from '../context/LabelsContext/label.context';
 
 const AuthComponent = ({navigation}) => {
+  const labels = useLabelsContext();
   const {data, getData} = useVisitorData();
   useEffect(() => {
     getData();
@@ -59,10 +61,10 @@ const AuthComponent = ({navigation}) => {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 10,
+        gap: 40,
       }}>
-      <Button title="Login" onPress={() => handleLogin(true)} />
-      <Button title="Signup" onPress={() => handleLogin(false)} />
+      <Button title={labels.login} onPress={() => handleLogin(true)} />
+      <Button title={labels.signup} onPress={() => handleLogin(false)} />
     </View>
   );
 };

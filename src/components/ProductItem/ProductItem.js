@@ -23,8 +23,8 @@ const ProductItem = ({route, navigation}) => {
   const product = useSelector(state => getProductItem(state, route.params.productListId, route.params.productId));
   const categories = useSelector(selectCategories);
   const isHomeProductList = productList?.type === Constant.PRODUCT_LIST_TYPE.HOME;
-  // console.log('productListId:', route.params.productListId, ' ProductItem', product);
   const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
+
   const [isLoading, setIsLoading] = useState(false);
   const [addItemNameValue, setAddItemNameValue] = useState(product?.name);
   const [productQuantity, setProductQuantity] = useState(product?.quantity ?? 1);
@@ -178,7 +178,7 @@ const ProductItem = ({route, navigation}) => {
             <View style={[styles.rowPart, {borderEndWidth: 1, borderEndColor: 'black'}]}>
               <ClickableIcon iconName={'add'} onPress={addQuantity} iconColor={'black'} />
               <LabelWithValue label={labels.quantity} value={productQuantity} />
-              <ClickableIcon iconName={'remove'} onPress={removeCurrentQuantity} />
+              <ClickableIcon iconName={'remove'} onPress={removeQuantity} />
             </View>
             <View style={styles.rowPart}>
               <TouchableOpacity onPress={() => setUnitTypeModalVisible(true)}>
@@ -263,8 +263,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     gap: 20,
-    maxHeight: '15%',
-    minHeight: 50,
+    minHeight: 60,
   },
   propertiesContainer: {
     marginVertical: 20,
@@ -272,7 +271,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'column',
     gap: 20,
-    height: '75%',
+    height: '70%',
     paddingHorizontal: '5%',
   },
   rowContainer: {

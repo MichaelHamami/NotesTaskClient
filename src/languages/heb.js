@@ -52,6 +52,9 @@ const heb = () => {
     deleteBoughtList: 'מחק סל קניות',
     currentQuantityAtHome: 'כמות המוצר בבית',
     generateShoppingList: 'יצירת רשימת קניות',
+    outOf: 'מיתוך',
+    signup: 'הרשמה',
+    login: 'כניסה למערכת',
   };
 };
 

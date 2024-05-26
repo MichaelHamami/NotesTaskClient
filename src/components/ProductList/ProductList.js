@@ -176,9 +176,15 @@ const ProductList = ({route, navigation}) => {
     await handleProductUpdate(id, {bought: !currentValue}, productList);
   };
 
-  const QuantityView = ({quantity, unit_type}) => {
+  const QuantityView = ({quantity, unit_type, current_quantity}) => {
     return (
       <View style={quantityStyles.container}>
+        {isHomeProductList && (
+          <>
+            <Text>{current_quantity}</Text>
+            <Text>{labels.outOf}</Text>
+          </>
+        )}
         <Text>{quantity ?? 1}</Text>
         <Text>{labels.unit_type[unit_type ?? 1]}</Text>
       </View>
@@ -249,11 +255,11 @@ const ProductList = ({route, navigation}) => {
               )}
               <TouchableOpacity style={categoriesAndItemStyles.itemName} onPress={() => handleItemPress(product._id)}>
                 <View>
-                  <Text>{product.name}</Text>
+                  <Text style={categoriesAndItemStyles.nameText}>{product.name}</Text>
                 </View>
               </TouchableOpacity>
 
-              <QuantityView quantity={product.quantity} unit_type={product.unit_type} />
+              <QuantityView quantity={product.quantity} unit_type={product.unit_type} current_quantity={product.current_quantity} />
             </View>
           ))}
         </View>
@@ -412,8 +418,9 @@ const noItemsStyles = StyleSheet.create({
 const quantityStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    flexDirection: 'column',
+    flexDirection: 'row',
     padding: 5,
+    gap: 5,
   },
 });
 
@@ -458,6 +465,9 @@ const categoriesAndItemStyles = StyleSheet.create({
   },
   itemName: {
     width: '60%',
+  },
+  nameText: {
+    textAlign: 'left',
   },
   homeFooter: {
     flexDirection: 'row',

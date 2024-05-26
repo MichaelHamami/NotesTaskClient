@@ -21,7 +21,12 @@ const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => 
   };
 
   const numOfBoughtItems = items?.reduce((acc, item) => {
-    const numToAdd = item.bought ? 1 : 0;
+    let numToAdd = 0;
+    if (isHomeProductList) {
+      numToAdd = item.current_quantity === item.quantity ? 1 : 0;
+    } else {
+      numToAdd = item.bought ? 1 : 0;
+    }
     return acc + numToAdd;
   }, 0);
 

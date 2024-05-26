@@ -52,6 +52,9 @@ const eng = () => {
     deleteBoughtList: 'Delete Bought List',
     currentQuantityAtHome: 'Current Quantity of Product',
     generateShoppingList: 'Generate shopping list',
+    outOf: 'Out of',
+    signup: 'Signup',
+    login: 'Login',
   };
 };
 
