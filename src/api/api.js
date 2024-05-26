@@ -1,7 +1,7 @@
 import axios from 'axios';
+import {API_BASE_URL} from '../../config';
 
-const baseURL = 'http://10.0.0.17:5005';
 export default axiosInstance = axios.create({
-  baseURL,
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });

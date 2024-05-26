@@ -19,7 +19,10 @@ function App(): React.JSX.Element {
     <Provider store={store}>
       <LabelsContextProvider>
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}>
             <Stack.Screen name="Login" component={AuthComponent} />
             <Stack.Screen name="MainProductList" component={MainProductList} />
             <Stack.Screen name="ProductItem" component={ProductItem} />

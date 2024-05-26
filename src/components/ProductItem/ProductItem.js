@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   },
   rowPart: {
     width: '50%',
-    gap: 20,
+    gap: 5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
