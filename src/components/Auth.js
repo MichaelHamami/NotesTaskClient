@@ -1,72 +1,131 @@
-import React, {useEffect} from 'react';
-import {View, Button, Alert} from 'react-native';
-import TouchID from 'react-native-touch-id';
-import {useVisitorData} from '@fingerprintjs/fingerprintjs-pro-react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Button, StyleSheet, TextInput, Text} from 'react-native';
+import {useDispatch} from 'react-redux';
 import {signUp, login} from '../api/auth.api';
+import {getUserInfo} from '../api/user.api';
+import {addUser} from '../redux/actions/user.actions';
 import {useLabelsContext} from '../context/LabelsContext/label.context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CheckBox from '@react-native-community/checkbox';
 
 const AuthComponent = ({navigation}) => {
   const labels = useLabelsContext();
-  const {data, getData} = useVisitorData();
+  const dispatch = useDispatch();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    getData();
+    const loadCredentials = async () => {
+      try {
+        const savedUsername = await AsyncStorage.getItem('username');
+        const savedPassword = await AsyncStorage.getItem('password');
+        if (!savedUsername || !savedPassword) {
+          setIsLoading(false);
+          return;
+        }
+        performLoginOrSignup(true, {username: savedUsername, password: savedPassword});
+        setIsLoading(false);
+      } catch (e) {
+        console.error('Failed to load credentials', e);
+        setIsLoading(false);
+      }
+    };
+
+    loadCredentials();
   }, []);
 
-  const handleLogin = async isLogin => {
+  const handleAuthAction = async isLogin => {
+    setErrorMessage('');
+
+    if (!username || !password) {
+      setErrorMessage(labels.usernameAndPasswordRequired);
+      return;
+    }
+
+    if (rememberMe) {
+      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem('password', password);
+    } else {
+      await AsyncStorage.removeItem('username');
+      await AsyncStorage.removeItem('password');
+    }
+    performLoginOrSignup(isLogin, {username, password});
+  };
+
+  const fetchUserInfo = async () => {
     try {
-      const supportOptionalConfigObject = {
-        unifiedErrors: false,
-      };
+      const user = await getUserInfo();
+      if (!user) return;
 
-      const optionalConfigObject = {
-        unifiedErrors: false,
-        title: 'someTitle',
-        imageColor: 'red',
-        imageErrorColor: 'black',
-        sensorDescription: 'sensor description',
-        sensorErrorDescription: 'error description',
-        cancelText: 'cancel button text',
-      };
-
-      const isSupported = await TouchID.isSupported(supportOptionalConfigObject);
-
-      if (isSupported) {
-        const touchIDResponse = await TouchID.authenticate('Authenticate with Touch ID', optionalConfigObject);
-        if (touchIDResponse && data?.visitorId) {
-          performLoginOrSignup(isLogin, data.visitorId);
-        } else {
-          Alert.alert('Authentication Failed', 'Please try again or enter your username and passworasdasd.');
-        }
-      } else {
-        Alert.alert('Touch ID Not Supported', 'Please login with your email and password.');
-      }
+      dispatch(addUser(user));
     } catch (error) {
-      console.error('Touch ID Error:', error);
-      Alert.alert('Error', 'An error occurred. Please try again or enter your username and password.');
+      console.log(error);
     }
   };
 
-  const performLoginOrSignup = async (isLogin, fingerprint) => {
+  const handleSuccessAuthAction = async () => {
+    await fetchUserInfo();
+  };
+
+  const performLoginOrSignup = async (isLogin, data) => {
     try {
-      const response = isLogin ? await login(fingerprint) : await signUp(fingerprint);
+      const response = isLogin ? await login(data) : await signUp(data);
+      await handleSuccessAuthAction();
       navigation.navigate('MainProductList');
     } catch (error) {
-      console.log('request failed:', error);
+      setErrorMessage(labels.defaultAuthErrorMessage);
+      await AsyncStorage.removeItem('username');
+      await AsyncStorage.removeItem('password');
     }
   };
 
+  if (isLoading) {
+    return <Text>{labels.loading}...</Text>;
+  }
+
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 40,
-      }}>
-      <Button title={labels.login} onPress={() => handleLogin(true)} />
-      <Button title={labels.signup} onPress={() => handleLogin(false)} />
+    <View style={styles.container}>
+      <TextInput style={styles.input} placeholder={labels.userName} value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder={labels.password} value={password} onChangeText={setPassword} />
+      <View style={styles.checkboxContainer}>
+        <CheckBox value={rememberMe} onValueChange={setRememberMe} />
+        <Text style={styles.label}>{labels.rememberMe}</Text>
+      </View>
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      <Button title={labels.login} onPress={() => handleAuthAction(true)} />
+      <Button title={labels.signup} onPress={() => handleAuthAction(false)} />
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    gap: 5,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  label: {
+    margin: 8,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 20,
+  },
+});
 export default AuthComponent;

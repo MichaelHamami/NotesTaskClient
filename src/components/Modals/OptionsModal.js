@@ -1,4 +1,4 @@
-import {View, TouchableOpacity, Text, StyleSheet, Modal} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Modal, ScrollView, FlatList} from 'react-native';
 import {useLabelsContext} from '../../context/LabelsContext/label.context';
 
 const OptionsModal = ({options, title, onSelectedOption, visible, closeModal}) => {
@@ -10,11 +10,15 @@ const OptionsModal = ({options, title, onSelectedOption, visible, closeModal}) =
         <View style={styles.modalContent}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.optionsContainer}>
-            {options.map((option, index) => (
-              <TouchableOpacity key={index} style={styles.option} onPress={() => onSelectedOption(option)}>
-                <Text style={styles.optionText}>{option.label}</Text>
-              </TouchableOpacity>
-            ))}
+            <FlatList
+              data={options}
+              renderItem={({item}, index) => (
+                <TouchableOpacity key={index} style={styles.option} onPress={() => onSelectedOption(item)}>
+                  <Text style={styles.optionText}>{item.label}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(_item, index) => index}
+            />
           </View>
           <View style={styles.cancelButton}>
             <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
@@ -39,6 +43,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '80%',
+    height: '80%',
     overflow: 'hidden',
     gap: 20,
   },
@@ -49,7 +54,9 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   optionsContainer: {
+    height: '80%',
     gap: 20,
+    padding: 10,
   },
   option: {
     borderBottomColor: '#ccc',

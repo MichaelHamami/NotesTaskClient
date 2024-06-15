@@ -32,6 +32,8 @@ import CheckBox from '@react-native-community/checkbox';
 import cartGif from '../../assets/clown-cart.gif';
 import {BOUGHT_LIST_ID} from './ProductList.helper';
 import useProductList from './useProductList';
+import BaseHeader from '../baseComponents/BaseHeader';
+import ClickableIcon from '../baseComponents/ClickableIcon';
 import * as Constant from '../../constants';
 
 const ProductList = ({route, navigation}) => {
@@ -42,8 +44,8 @@ const ProductList = ({route, navigation}) => {
   const isHomeProductList = productList?.type === Constant.PRODUCT_LIST_TYPE.HOME;
   const {handleProductUpdate, calculateShoppingProductList} = useProductList();
   const hasItems = productList?.items?.length > 0;
-  const backIconName = I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
-  const searchBackIconName = !I18nManager.isRTL ? 'arrow-right' : 'arrow-left';
+  const backIconName = I18nManager.isRTL ? 'arrow-forward' : 'arrow-back';
+  const searchBackIconName = !I18nManager.isRTL ? 'arrow-forward' : 'arrow-back';
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -64,6 +66,7 @@ const ProductList = ({route, navigation}) => {
         isSystem: false,
         color: '#000000',
         items: [],
+        image: 'shopping-cart',
       },
     };
 
@@ -213,11 +216,11 @@ const ProductList = ({route, navigation}) => {
     } catch (error) {}
   };
 
-  const ListItem = ({name, items, color, isSystem, isBoughtList}) => {
+  const ListItem = ({name, items, color, isSystem, isBoughtList, image}) => {
     return (
       <View style={categoriesAndItemStyles.container}>
         <View style={categoriesAndItemStyles.header}>
-          <IconMaterial name={'add'} size={20} color={color} />
+          <IconMaterial name={image} size={20} color={color} />
           <Text style={[categoriesAndItemStyles.label, {color: color}]}>{getCategoryName(name, isSystem)} </Text>
         </View>
 
@@ -263,12 +266,6 @@ const ProductList = ({route, navigation}) => {
             </View>
           ))}
         </View>
-
-        {isHomeProductList && (
-          <View style={categoriesAndItemStyles.homeFooter}>
-            <Button title={labels.generateShoppingList} onPress={() => calculateShoppingProductList(productList, navigation)} color={'red'} />
-          </View>
-        )}
       </View>
     );
   };
@@ -276,11 +273,9 @@ const ProductList = ({route, navigation}) => {
   return (
     <View style={{flex: 1}}>
       {searchValue === false ? (
-        <View style={headerStyles.headerContainer}>
+        <BaseHeader>
           <View style={headerStyles.titleAndBackButtonContainer}>
-            <TouchableOpacity onPress={handlePress}>
-              <Icon name={backIconName} size={20} color="white" />
-            </TouchableOpacity>
+            <ClickableIcon iconName={backIconName} iconColor={'white'} onPress={handlePress} />
             <View style={headerStyles.titleContainer}>
               <Text style={headerStyles.title}>{productList?.name}</Text>
             </View>
@@ -317,13 +312,11 @@ const ProductList = ({route, navigation}) => {
               </MenuOptions>
             </Menu>
           </View>
-        </View>
+        </BaseHeader>
       ) : (
-        <View style={headerStyles.headerContainer}>
+        <BaseHeader>
           <View style={headerStyles.titleAndBackButtonContainer}>
-            <TouchableOpacity onPress={cancelSearchMode}>
-              <Icon name={searchBackIconName} size={20} color="white" />
-            </TouchableOpacity>
+            <ClickableIcon iconName={searchBackIconName} iconColor={'white'} onPress={cancelSearchMode} />
             <View style={headerStyles.titleContainer}>
               <TextInput
                 style={headerStyles.input}
@@ -334,7 +327,7 @@ const ProductList = ({route, navigation}) => {
               />
             </View>
           </View>
-        </View>
+        </BaseHeader>
       )}
 
       <View style={styles.addItemContainer}>
@@ -356,15 +349,22 @@ const ProductList = ({route, navigation}) => {
         </View>
       </View>
       {hasItems ? (
-        <ScrollView>
+        <>
           <View style={styles.categoriesAndItemsContainer}>
-            {categoriesAndItems.map((category, index) => (
-              <View key={index}>
-                <ListItem {...category} isBoughtList={category._id === BOUGHT_LIST_ID} />
+            <ScrollView>
+              {categoriesAndItems.map((category, index) => (
+                <View key={index}>
+                  <ListItem {...category} isBoughtList={category._id === BOUGHT_LIST_ID} />
+                </View>
+              ))}
+            </ScrollView>
+            {isHomeProductList && (
+              <View style={categoriesAndItemStyles.homeFooter}>
+                <Button title={labels.generateShoppingList} onPress={() => calculateShoppingProductList(productList, navigation)} color={'red'} />
               </View>
-            ))}
+            )}
           </View>
-        </ScrollView>
+        </>
       ) : (
         <View style={noItemsStyles.container}>
           <TouchableWithoutFeedback onPress={navigateToItems}>
@@ -473,8 +473,7 @@ const categoriesAndItemStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginLeft: -20,
-    marginTop: 10,
+    paddingEnd: 30,
     width: '100%',
     height: 40,
   },
@@ -524,13 +523,6 @@ const styles = StyleSheet.create({
 });
 
 const headerStyles = StyleSheet.create({
-  headerContainer: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    height: 56,
-    backgroundColor: Constant.PRIMARY_COLOR,
-    paddingHorizontal: 16,
-  },
   titleAndBackButtonContainer: {
     gap: 10,
     flexDirection: 'row',

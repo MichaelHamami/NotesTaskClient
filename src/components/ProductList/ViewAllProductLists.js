@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getProductListByType} from '../../redux/selectors/selector';
+import {getProductListByType} from '../../redux/selectors';
 import Toast from 'react-native-easy-toast';
 import * as ProductListActions from '../../redux/actions/productList.actions';
 import * as CategoryActions from '../../redux/actions/category.actions';

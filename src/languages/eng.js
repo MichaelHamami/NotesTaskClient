@@ -1,3 +1,5 @@
+import * as Constant from '../constants';
+
 const eng = () => {
   return {
     new: 'Add',
@@ -55,6 +57,27 @@ const eng = () => {
     outOf: 'Out of',
     signup: 'Signup',
     login: 'Login',
+    addCategory: 'Add Category',
+    categoryNamePlaceHolder: 'Name of the category',
+    color: 'Color',
+    iconName: 'Icon Name',
+    supportedIcons: 'Supported Icons',
+    preview: 'Preview',
+    exampleOf: 'Example Of',
+    profile: 'Profile',
+    settings: 'Settings',
+    language: 'Language',
+    languageNameByCode: {
+      [Constant.USER_LANGUAGE.HEB]: 'Hebrew',
+      [Constant.USER_LANGUAGE.ENG]: 'English',
+    },
+    defaultAuthErrorMessage: 'Username or Password are invalid.',
+    usernameAndPasswordRequired: 'Username and Password are required.',
+    rememberMe: 'Remember me',
+    userName: 'User Name',
+    password: 'Password',
+    phoneLanguage: 'Phone Language',
+    loading: 'Loading',
   };
 };
 

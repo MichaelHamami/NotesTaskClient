@@ -1,3 +1,5 @@
+import * as Constant from '../constants';
+
 const heb = () => {
   return {
     new: 'חדש',
@@ -55,6 +57,27 @@ const heb = () => {
     outOf: 'מיתוך',
     signup: 'הרשמה',
     login: 'כניסה למערכת',
+    addCategory: 'הוסף קטגוריה',
+    categoryNamePlaceHolder: 'שם לקטגוריה',
+    color: 'צבע',
+    iconName: 'שם אייקון',
+    supportedIcons: 'אייקונים נתמכים',
+    preview: 'תצוגה מוקדמת',
+    exampleOf: 'דוגמא של',
+    profile: 'פרופיל',
+    settings: 'הגדרות',
+    language: 'שפה',
+    languageNameByCode: {
+      [Constant.USER_LANGUAGE.HEB]: 'עברית',
+      [Constant.USER_LANGUAGE.ENG]: 'אנגלית',
+    },
+    defaultAuthErrorMessage: 'שם משתמש או הסיסמא לא נכונים',
+    usernameAndPasswordRequired: 'שם משתמש וסיסמא שדות חובה',
+    rememberMe: 'כניסה אוטומטית',
+    userName: 'שם משתמש',
+    password: 'סיסמא',
+    phoneLanguage: 'שפת הפאלפון',
+    loading: 'טוען',
   };
 };
 

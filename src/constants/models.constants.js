@@ -12,3 +12,8 @@ export const PRODUCT_UNIT_TYPE = {
   OZ: 3,
   gal: 4,
 };
+
+export const USER_LANGUAGE = {
+  HEB: 0,
+  ENG: 1,
+};

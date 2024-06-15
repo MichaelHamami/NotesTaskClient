@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import * as ReduxActions from '../redux/actions/note.actions';
-import {selectNotes} from '../redux/selectors/selector';
+import {selectNotes} from '../redux/selectors';
 import {getNotes, deleteNote, createNote} from '../api/note.api';
 import {View, Text, TextInput, Button, FlatList} from 'react-native';
 import Note from './Note';
@@ -50,9 +50,7 @@ function NotesList() {
 
   return (
     <View style={{flex: 1, padding: 20}}>
-      <Text style={{fontSize: 24, fontWeight: 'bold', marginBottom: 20}}>
-        Notes
-      </Text>
+      <Text style={{fontSize: 24, fontWeight: 'bold', marginBottom: 20}}>Notes</Text>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
@@ -71,9 +69,7 @@ function NotesList() {
           <Button title="Add Note" onPress={handleAddNote} />
           <FlatList
             data={notes}
-            renderItem={({item}) => (
-              <Note item={item} handleDeleteNote={handleDeleteNote} />
-            )}
+            renderItem={({item}) => <Note item={item} handleDeleteNote={handleDeleteNote} />}
             keyExtractor={item => item._id.toString()}
           />
         </>
