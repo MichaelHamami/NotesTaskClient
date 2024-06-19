@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, Button, StyleSheet, TextInput, Text} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {signUp, login} from '../api/auth.api';
-import {getUserInfo} from '../api/user.api';
-import {addUser} from '../redux/actions/user.actions';
-import {useLabelsContext} from '../context/LabelsContext/label.context';
+import {signUp, login} from 'api/auth.api';
+import {getUserInfo} from 'api/user.api';
+import {addUser} from 'redux/actions/user.actions';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 

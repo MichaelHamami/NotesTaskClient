@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, I18nManager, Button} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {useLabelsContext} from '../context/LabelsContext/label.context';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Toast from 'react-native-easy-toast';
-import * as ReduxActions from '../redux/actions/category.actions';
-import {createCategory} from '../api/category.api';
-import TextAreaRow from './baseComponents/TextAreaRow';
+import * as ReduxActions from 'redux/actions/category.actions';
+import {createCategory} from 'api/category.api';
+import TextAreaRow from 'components/baseComponents/TextAreaRow';
 import jsonIcon from 'react-native-vector-icons/glyphmaps/MaterialIcons.json';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import * as Constant from '../constants';
 import OptionsModal from './Modals/OptionsModal';
+import * as Constant from 'MyConstants';
 
 const CreateCategory = ({navigation}) => {
   const labels = useLabelsContext();

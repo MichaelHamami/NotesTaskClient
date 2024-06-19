@@ -1,5 +1,5 @@
-import {View, TouchableOpacity, Text, StyleSheet, Modal, ScrollView, FlatList} from 'react-native';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
+import {View, TouchableOpacity, Text, StyleSheet, Modal, FlatList} from 'react-native';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 
 const OptionsModal = ({options, title, onSelectedOption, visible, closeModal}) => {
   const labels = useLabelsContext();

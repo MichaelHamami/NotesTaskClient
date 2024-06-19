@@ -1,20 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import {View, ScrollView, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-easy-toast';
-import * as ProductListActions from '../../redux/actions/productList.actions';
-import {getProductLists, updateProductList} from '../../api/productList.api';
-import {getProductListById, getProductItem} from '../../redux/selectors/productList.selectors';
-import {updateProduct} from '../../api/product.api';
-import {selectCategories} from '../../redux/selectors/category.selectors';
-import ClickableIcon from '../baseComponents/ClickableIcon';
-import LabelWithValue from '../baseComponents/LabelWithValue';
-import OptionsModal from '../Modals/OptionsModal';
-import AreYouSureModal from '../Modals/AreYouSureModal';
-import * as Constant from '../../constants';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
+import {getProductLists, updateProductList} from 'api/productList.api';
+import {updateProduct} from 'api/product.api';
+import * as ProductListActions from 'redux/actions/productList.actions';
+import {getProductListById, getProductItem} from 'redux/selectors/productList.selectors';
+import {selectCategories} from 'redux/selectors/category.selectors';
+import ClickableIcon from 'components/baseComponents/ClickableIcon';
+import LabelWithValue from 'components/baseComponents/LabelWithValue';
+import OptionsModal from 'components/Modals/OptionsModal';
+import AreYouSureModal from 'components/Modals/AreYouSureModal';
+import * as Constant from 'MyConstants';
 
 const ProductItem = ({route, navigation}) => {
   const labels = useLabelsContext();

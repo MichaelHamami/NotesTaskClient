@@ -1,7 +1,7 @@
 import {I18nManager} from 'react-native';
 import {useSelector} from 'react-redux';
-import {selectUser} from '../redux/selectors';
-import * as Constant from '../constants';
+import {selectUser} from 'redux/selectors';
+import * as Constant from 'MyConstants';
 
 const useUser = () => {
   const user = useSelector(selectUser);

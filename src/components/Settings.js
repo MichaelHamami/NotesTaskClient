@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useDispatch} from 'react-redux';
-import useUser from '../hooks/useUser';
-import BaseHeader from './baseComponents/BaseHeader';
-import ClickableIcon from './baseComponents/ClickableIcon';
-import {useLabelsContext} from '../context/LabelsContext/label.context';
+import useUser from 'hooks/useUser';
+import BaseHeader from 'components/baseComponents/BaseHeader';
+import ClickableIcon from 'components/baseComponents/ClickableIcon';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import OptionsModal from './Modals/OptionsModal';
-import {updateUserInfo} from '../api/user.api';
-import {addUser} from '../redux/actions/user.actions';
+import {updateUserInfo} from 'api/user.api';
+import {addUser} from 'redux/actions/user.actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Constant from '../constants';
+import * as Constant from 'MyConstants';
 
 function Settings({navigation}) {
   const labels = useLabelsContext();

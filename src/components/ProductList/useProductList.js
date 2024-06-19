@@ -1,7 +1,7 @@
 import {useDispatch} from 'react-redux';
-import {updateProduct} from '../../api/product.api';
-import * as ProductListActions from '../../redux/actions/productList.actions';
-import {generateRelativeProductList} from '../../api/productList.api';
+import {updateProduct} from 'api/product.api';
+import {generateRelativeProductList} from 'api/productList.api';
+import * as ProductListActions from 'redux/actions/productList.actions';
 
 const useProductList = () => {
   const dispatch = useDispatch();

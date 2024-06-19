@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, TextInput, I18nManager} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {useLabelsContext} from '../context/LabelsContext/label.context';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Toast from 'react-native-easy-toast';
-import * as ReduxActions from '../redux/actions/productList.actions';
-import {createProductList} from '../api/productList.api';
-import * as Constant from '../constants';
+import * as ReduxActions from 'redux/actions/productList.actions';
+import {createProductList} from 'api/productList.api';
+import * as Constant from 'MyConstants';
 
 const CreateList = ({navigation}) => {
   const labels = useLabelsContext();

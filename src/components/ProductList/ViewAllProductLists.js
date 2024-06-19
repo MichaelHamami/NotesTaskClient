@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getProductListByType} from '../../redux/selectors';
+import {getProductListByType} from 'redux/selectors';
+import * as ProductListActions from 'redux/actions/productList.actions';
+import * as CategoryActions from 'redux/actions/category.actions';
 import Toast from 'react-native-easy-toast';
-import * as ProductListActions from '../../redux/actions/productList.actions';
-import * as CategoryActions from '../../redux/actions/category.actions';
-import {getProductLists, deleteProductList, updateProductList, duplicateProductList} from '../../api/productList.api';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
+import {getProductLists, deleteProductList, updateProductList, duplicateProductList} from 'api/productList.api';
+import {getCategories} from 'api/category.api';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import ViewProductList from './ViewProductList';
-import {getCategories} from '../../api/category.api';
 
 const ViewAllProductLists = ({type}) => {
   const labels = useLabelsContext();

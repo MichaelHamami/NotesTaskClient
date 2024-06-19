@@ -1,9 +1,9 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import useUser from '../hooks/useUser';
-import BaseHeader from './baseComponents/BaseHeader';
-import ClickableIcon from './baseComponents/ClickableIcon';
-import {useLabelsContext} from '../context/LabelsContext/label.context';
+import useUser from 'hooks/useUser';
+import BaseHeader from 'components/baseComponents/BaseHeader';
+import ClickableIcon from 'components/baseComponents/ClickableIcon';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 
 function Profile({navigation}) {
   const labels = useLabelsContext();

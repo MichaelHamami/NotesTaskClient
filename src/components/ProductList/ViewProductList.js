@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TextInput, Dimensions, TouchableOpacity} from 'react-native';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import useProductList from './useProductList';
-import * as Constant from '../../constants';
+import * as Constant from 'MyConstants';
 
 const ViewProductList = ({productList, onDelete, onDuplicate, onUpdateName}) => {
   const labels = useLabelsContext();

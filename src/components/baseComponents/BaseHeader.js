@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import * as Constant from '../../constants';
+import * as Constant from '../../MyConstants';
 
 const BaseHeader = ({children}) => {
   return <View style={[styles.header]}>{children}</View>;

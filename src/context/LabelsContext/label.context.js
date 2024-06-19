@@ -1,9 +1,9 @@
 import React, {useContext, useMemo, useState, useEffect} from 'react';
-import useUser from '../..//hooks/useUser';
 import {I18nManager} from 'react-native';
-import {heb, eng} from '../../languages';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Constant from '../../constants';
+import useUser from 'hooks/useUser';
+import {heb, eng} from 'languages';
+import * as Constant from 'MyConstants';
 
 const LabelsContext = React.createContext();
 

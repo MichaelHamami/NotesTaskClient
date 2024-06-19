@@ -13,11 +13,11 @@ import {
 } from 'react-native';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import {useDispatch, useSelector} from 'react-redux';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-easy-toast';
-import * as ProductListActions from '../../redux/actions/productList.actions';
+import * as ProductListActions from 'redux/actions/productList.actions';
 import {
   getProductLists,
   addProductToProductList,
@@ -25,16 +25,16 @@ import {
   duplicateProductList,
   updateProductListItems,
   deleteProductListItems,
-} from '../../api/productList.api';
-import {getProductListById, getAllItemsFilterByProductId} from '../../redux/selectors/productList.selectors';
+} from 'api/productList.api';
+import {getProductListById, getAllItemsFilterByProductId} from 'redux/selectors/productList.selectors';
 import SuggestionList from './SuggestionList';
 import CheckBox from '@react-native-community/checkbox';
-import cartGif from '../../assets/clown-cart.gif';
+import cartGif from 'assets/clown-cart.gif';
 import {BOUGHT_LIST_ID} from './ProductList.helper';
 import useProductList from './useProductList';
-import BaseHeader from '../baseComponents/BaseHeader';
-import ClickableIcon from '../baseComponents/ClickableIcon';
-import * as Constant from '../../constants';
+import BaseHeader from 'components/baseComponents/BaseHeader';
+import ClickableIcon from 'components/baseComponents/ClickableIcon';
+import * as Constant from 'MyConstants';
 
 const ProductList = ({route, navigation}) => {
   const labels = useLabelsContext();

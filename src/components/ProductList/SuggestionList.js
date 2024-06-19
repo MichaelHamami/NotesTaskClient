@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 
 const SuggestionList = ({suggestions, onEdit}) => {
   const labels = useLabelsContext();

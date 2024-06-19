@@ -1,4 +1,4 @@
-import * as Constant from '../constants';
+import * as Constant from 'MyConstants';
 
 const eng = () => {
   return {

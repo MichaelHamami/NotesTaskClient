@@ -1,13 +1,13 @@
 import React, {useState, useRef} from 'react';
 import {View, Text, StyleSheet, Animated, Dimensions, TouchableOpacity} from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import {useLabelsContext} from '../../context/LabelsContext/label.context';
+import {useLabelsContext} from 'context/LabelsContext/label.context';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import ViewAllProductLists from './ViewAllProductLists';
-import ClickableIcon from '../baseComponents/ClickableIcon';
-import BaseHeader from '../baseComponents/BaseHeader';
-import useUser from '../../hooks/useUser';
-import * as Constant from '../../constants';
+import ClickableIcon from 'components/baseComponents/ClickableIcon';
+import BaseHeader from 'components/baseComponents/BaseHeader';
+import useUser from 'hooks/useUser';
+import * as Constant from 'MyConstants';
 
 const {width} = Dimensions.get('window');
 const renderScene = SceneMap({
