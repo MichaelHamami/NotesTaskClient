@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, Modal, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {useLabelsContext} from 'context/LabelsContext/label.context';
+import { View, Modal, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useLabelsContext } from 'context/LabelsContext/label.context';
 
-const AreYouSureModal = ({text, visible, onClose, onApprove}) => {
+const AreYouSureModal = ({ text, visible, onClose, onApprove }) => {
   const labels = useLabelsContext();
 
   return (

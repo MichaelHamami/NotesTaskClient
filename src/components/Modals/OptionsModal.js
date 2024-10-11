@@ -1,7 +1,7 @@
-import {View, TouchableOpacity, Text, StyleSheet, Modal, FlatList} from 'react-native';
-import {useLabelsContext} from 'context/LabelsContext/label.context';
+import { View, TouchableOpacity, Text, StyleSheet, Modal, FlatList } from 'react-native';
+import { useLabelsContext } from 'context/LabelsContext/label.context';
 
-const OptionsModal = ({options, title, onSelectedOption, visible, closeModal}) => {
+const OptionsModal = ({ options, title, onSelectedOption, visible, closeModal }) => {
   const labels = useLabelsContext();
 
   return (
@@ -12,7 +12,7 @@ const OptionsModal = ({options, title, onSelectedOption, visible, closeModal}) =
           <View style={styles.optionsContainer}>
             <FlatList
               data={options}
-              renderItem={({item}, index) => (
+              renderItem={({ item }, index) => (
                 <TouchableOpacity key={index} style={styles.option} onPress={() => onSelectedOption(item)}>
                   <Text style={styles.optionText}>{item.label}</Text>
                 </TouchableOpacity>
@@ -32,21 +32,6 @@ const OptionsModal = ({options, title, onSelectedOption, visible, closeModal}) =
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    height: '80%',
-    overflow: 'hidden',
-    gap: 20,
-  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',

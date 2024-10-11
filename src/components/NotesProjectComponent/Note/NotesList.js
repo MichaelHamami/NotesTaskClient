@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-import * as ReduxActions from '../redux/actions/note.actions';
-import {selectNotes} from '../redux/selectors';
-import {getNotes, deleteNote, createNote} from '../api/note.api';
-import {View, Text, TextInput, Button, FlatList} from 'react-native';
-import Note from './Note';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import * as ReduxActions from '../../../redux/actions/note.actions';
+import { selectNotes } from '../../../redux/selectors';
+import { getNotes, deleteNote, createNote } from '../../../api/note.api';
+import { View, Text, TextInput, Button, FlatList } from 'react-native';
+import NoteListItemView from './NoteListItemView';
 
 function NotesList() {
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ function NotesList() {
   const handleAddNote = async () => {
     if (newNoteContent.trim() !== '') {
       try {
-        const data = await createNote({content: newNoteContent});
+        const data = await createNote({ content: newNoteContent });
         dispatch(ReduxActions.addNote(data));
         setNewNoteContent('');
       } catch (error) {
@@ -49,16 +49,17 @@ function NotesList() {
   };
 
   return (
-    <View style={{flex: 1, padding: 20}}>
-      <Text style={{fontSize: 24, fontWeight: 'bold', marginBottom: 20}}>Notes</Text>
+    <View style={{ flex: 1, padding: 20, backgroundColor: 'gray' }}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Notes</Text>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <>
+          <FlatList data={notes} renderItem={({ item }) => <NoteListItemView item={item} />} keyExtractor={item => item._id.toString()} />
           <TextInput
             style={{
               height: 40,
-              borderColor: 'gray',
+              borderColor: 'white',
               borderWidth: 1,
               marginBottom: 10,
               paddingHorizontal: 10,
@@ -67,11 +68,6 @@ function NotesList() {
             onChangeText={text => setNewNoteContent(text)}
           />
           <Button title="Add Note" onPress={handleAddNote} />
-          <FlatList
-            data={notes}
-            renderItem={({item}) => <Note item={item} handleDeleteNote={handleDeleteNote} />}
-            keyExtractor={item => item._id.toString()}
-          />
         </>
       )}
     </View>

@@ -72,13 +72,19 @@ const AuthComponent = ({navigation}) => {
 
   const performLoginOrSignup = async (isLogin, data) => {
     try {
+      setIsLoading(true);
       const response = isLogin ? await login(data) : await signUp(data);
       await handleSuccessAuthAction();
-      navigation.navigate('MainProductList');
+      // const redirectComponent = 'MainProductList'
+      const redirectComponent = 'NotesList';
+
+      navigation.navigate(redirectComponent);
     } catch (error) {
       setErrorMessage(labels.defaultAuthErrorMessage);
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('password');
+    } finally {
+      setIsLoading(false);
     }
   };
 
