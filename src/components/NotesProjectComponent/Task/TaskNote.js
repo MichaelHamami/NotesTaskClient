@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import CheckBox from '@react-native-community/checkbox';
 import { getTaskTypeByValue } from './taskHelper';
-import { updatedTask } from 'api/task.api';
+import { updatedTask, deleteTask } from 'api/task.api';
 import { formattedDateTime } from 'utils/helpers';
 import * as NoteActions from 'redux/actions/note.actions';
 import ClickableIcon from 'components/baseComponents/ClickableIcon';
@@ -43,10 +43,22 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
     });
   };
 
+  const handleDeleteTask = async () => {
+    try {
+      setLoading(true);
+      const updatedNote = await deleteTask(id);
+      onSuccess(updatedNote);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.notExpandedContainer}>
         <View style={styles.startContainer}>
+          <ClickableIcon iconName={'delete'} iconColor={'black'} onPress={handleDeleteTask} />
           <CheckBox value={isSelected} onValueChange={handleCheckBoxClicked} style={styles.checkbox} disabled={isLoading} />
           <Text style={styles.title}>{title}</Text>
         </View>
@@ -101,7 +113,8 @@ const styles = StyleSheet.create({
   },
   startContainer: {
     flexDirection: 'row',
-    gap: 5,
+    gap: 10,
+    alignItems: 'center',
   },
   endContainer: {
     flexDirection: 'row',
