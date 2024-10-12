@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, Button, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TextAreaRow from 'components/baseComponents/TextAreaRow';
+import moment from 'moment-timezone';
+import { formattedDateTime } from 'utils/helpers';
 import * as Constant from 'MyConstants';
 
 const TaskModal = ({ onClose, onCreateTask }) => {
@@ -10,7 +12,9 @@ const TaskModal = ({ onClose, onCreateTask }) => {
   const [type, setType] = useState(Constant.TASK_TYPE.Normal);
   const [circularTime, setCircularTime] = useState(null);
   const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const handleCreateTask = () => {
     if (!title) {
@@ -23,7 +27,7 @@ const TaskModal = ({ onClose, onCreateTask }) => {
       type,
       circulationTime: circularTime,
       isCompleted: false,
-      endDate: date,
+      endDate: getCombinedDateTime(),
     };
     onCreateTask(task);
   };
@@ -33,10 +37,33 @@ const TaskModal = ({ onClose, onCreateTask }) => {
   };
 
   const handleChangeDate = (event, selectedDate) => {
-    console.log(event, selectedDate);
-    setShowDatePicker(false);
-    if (!selectedDate) return;
-    setDate(selectedDate);
+    if (event.type === 'set') {
+      const currentDate = selectedDate || date;
+      setShowDatePicker(false);
+      setDate(currentDate);
+      setShowTimePicker(true);
+    } else {
+      setShowDatePicker(false);
+    }
+  };
+
+  const handleChangeTime = (event, selectedTime) => {
+    if (event.type === 'set') {
+      const currentTime = selectedTime || time;
+      setShowTimePicker(false);
+      setTime(currentTime);
+    } else {
+      setShowTimePicker(false);
+    }
+  };
+
+  const getCombinedDateTime = () => {
+    const combinedDateTime = new Date(date);
+    combinedDateTime.setHours(time.getHours());
+    combinedDateTime.setMinutes(time.getMinutes());
+    const utcDate = moment(combinedDateTime).utc().format('YYYY-MM-DD HH:mm:ss');
+    const jerusalemDate = moment(utcDate).tz('Asia/Jerusalem', false).set('hour', time.getHours()).set('minute', time.getMinutes());
+    return jerusalemDate;
   };
 
   return (
@@ -68,11 +95,8 @@ const TaskModal = ({ onClose, onCreateTask }) => {
                     <Text>Choose End Date</Text>
                   </TouchableOpacity>
                   {showDatePicker && <DateTimePicker value={date} mode="date" display="default" onChange={handleChangeDate} />}
-                  <Text>
-                    {date
-                      ? `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`
-                      : 'No date selected'}
-                  </Text>
+                  {showTimePicker && <DateTimePicker value={time} mode="time" display="default" onChange={handleChangeTime} />}
+                  <Text>Selected End Date: {formattedDateTime(getCombinedDateTime())}</Text>
                 </>
               )}
             </View>

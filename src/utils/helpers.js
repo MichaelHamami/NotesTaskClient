@@ -1,4 +1,5 @@
 import { ToastAndroid, Platform, Alert } from 'react-native';
+import moment from 'moment-timezone';
 
 export function splitStringAtFirstOccurrence(inputString, delimiter) {
   var index = inputString.indexOf(delimiter);
@@ -17,4 +18,9 @@ export const showToast = (message, isSuccess = true) => {
   } else {
     Alert.alert(isSuccess ? 'Success' : 'Error', message);
   }
+};
+
+export const formattedDateTime = endDate => {
+  const israelTime = moment.tz(endDate, 'Asia/Jerusalem').format('YYYY-MM-DD HH:mm');
+  return israelTime;
 };

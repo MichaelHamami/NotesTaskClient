@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import CheckBox from '@react-native-community/checkbox';
 import { getTaskTypeByValue } from './taskHelper';
 import { updatedTask } from 'api/task.api';
-import * as Constant from 'MyConstants';
+import { formattedDateTime } from 'utils/helpers';
 import * as NoteActions from 'redux/actions/note.actions';
+import ClickableIcon from 'components/baseComponents/ClickableIcon';
+import * as Constant from 'MyConstants';
 
 const TaskNote = ({ title, description, isCompleted, type, endDate, circulationTime, componentId: id }) => {
   const [isSelected, setIsSelected] = useState(isCompleted);
@@ -50,16 +52,14 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
         </View>
 
         <View style={styles.endContainer}>
-          <TouchableOpacity activeOpacity={0.8} onPress={handelExpended} style={styles.info}>
-            <Text style={styles.expendedBtn}>{expanded ? '^' : 'v'}</Text>
-          </TouchableOpacity>
+          <ClickableIcon iconName={expanded ? 'keyboard-arrow-up' : 'arrow-drop-down'} iconColor={'black'} onPress={handelExpended} />
         </View>
       </View>
 
       <View style={{ height: expanded ? null : 0, overflow: 'hidden' }}>
         {description && <Text style={styles.description}>{description}</Text>}
         <Text style={styles.info}>Type: {getTaskTypeByValue(type)}</Text>
-        {endDate && <Text style={styles.info}>End Date: {endDate ? endDate.toString() : 'No end date'}</Text>}
+        {endDate && <Text style={styles.info}>End Date: {formattedDateTime(endDate)}</Text>}
         {type === Constant.TASK_TYPE.Circular && (
           <>
             <Text style={styles.info}>Circulation Time: {circulationTime} minutes</Text>
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
   endContainer: {
     flexDirection: 'row',
     gap: 5,
+    alignItems: 'center',
   },
 });
 

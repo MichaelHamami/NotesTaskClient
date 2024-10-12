@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
+import React from 'react';
+import { View, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { renderContent } from './noteHelper';
 import { getNoteById } from 'redux/selectors/note.selectors';
@@ -8,7 +8,6 @@ import * as Constant from 'MyConstants';
 
 const Note = ({ route }) => {
   const currentNote = useSelector(state => getNoteById(state, route.params.noteId));
-  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <View
@@ -22,7 +21,7 @@ const Note = ({ route }) => {
         backgroundColor: Constant.NOTES_PRIMARY_COLOR,
       }}>
       <NoteHeader note={currentNote} isOnEditMode={false} />
-      <View style={{ flex: 1, backgroundColor: currentNote.color }}>{renderContent(currentNote.content)}</View>
+      <ScrollView style={{ flex: 1, backgroundColor: currentNote.color }}>{renderContent(currentNote.content)}</ScrollView>
     </View>
   );
 };
