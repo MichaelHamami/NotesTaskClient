@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import NoteHeader from './NoteHeader';
 import { getNoteById } from 'redux/selectors/note.selectors';
@@ -85,7 +85,7 @@ const NoteEditor = ({ route }) => {
 
   const renderLines = () => {
     const lines = [];
-    const lineSpacing = 15;
+    const lineSpacing = 15.4;
     const numberOfLines = Math.floor(inputHeight / lineSpacing);
     for (let i = 0; i < numberOfLines; i++) {
       lines.push(<View key={i} style={[styles.line, { top: i * lineSpacing }]} />);
@@ -100,13 +100,21 @@ const NoteEditor = ({ route }) => {
 
   if (!currentNote) return <Text> ...No Content</Text>;
   return (
-    <View>
+    <View style={styles.container}>
       <NoteHeader note={currentNote} isOnEditMode={true} />
-      <View style={styles.linesAndTextInput} onLayout={onLayout}>
-        <View style={styles.linesContainer}>{renderLines()}</View>
-        <TextInput style={styles.textInput} multiline value={noteContent} onChangeText={handleNoteChange} onSelectionChange={handleSelectionChange} />
-      </View>
-      <View style={{ gap: 10 }}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={styles.linesAndTextInput} onLayout={onLayout}>
+          <View style={styles.linesContainer}>{renderLines()}</View>
+          <TextInput
+            style={styles.textInput}
+            multiline
+            value={noteContent}
+            onChangeText={handleNoteChange}
+            onSelectionChange={handleSelectionChange}
+          />
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
         <Button title="Add Task" onPress={openTaskModal} />
         <Button title="Save Note" onPress={handleSaveNote} />
         {errorMessage && <Text>{errorMessage}</Text>}
@@ -117,6 +125,13 @@ const NoteEditor = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
   linesAndTextInput: {},
   linesContainer: {
     position: 'absolute',
@@ -126,7 +141,7 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
   line: {
-    height: 1.5,
+    height: 1,
     width: width,
     backgroundColor: '#d3d3d3',
   },
@@ -135,6 +150,10 @@ const styles = StyleSheet.create({
     color: 'black',
     backgroundColor: 'transparent',
     textAlignVertical: 'top',
+  },
+  footer: {
+    gap: 10,
+    minHeight: 90,
   },
 });
 
