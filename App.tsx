@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { DeviceEventEmitter } from 'react-native';
+import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AuthComponent from './src/components/Auth';
@@ -14,16 +16,28 @@ import Settings from './src/components/Settings';
 import Note from './src/components/NotesProjectComponent/Note/Note';
 import NoteEditor from './src/components/NotesProjectComponent/Note/NoteEditor';
 import store from './src/redux/store';
-import { Provider } from 'react-redux';
 import { LabelsContextProvider } from './src/context/LabelsContext/label.context';
+import { navigationRef, navigate } from './src/services/navigation';
+
+const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
-  const Stack = createStackNavigator();
+  useEffect(() => {
+    // Listen for the intent data from native side
+    const subscription = DeviceEventEmitter.addListener('intentData', intentData => {
+      const { screenName, noteId } = intentData;
+      if (screenName === 'Note') {
+        navigate(screenName, { noteId: noteId });
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   return (
     <Provider store={store}>
       <LabelsContextProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
