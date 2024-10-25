@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View, Button, StyleSheet, TextInput, Text} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {signUp, login} from 'api/auth.api';
-import {getUserInfo} from 'api/user.api';
-import {addUser} from 'redux/actions/user.actions';
-import {useLabelsContext} from 'context/LabelsContext/label.context';
+import React, { useEffect, useState } from 'react';
+import { View, Button, StyleSheet, TextInput, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { signUp, login } from 'api/auth.api';
+import { getUserInfo } from 'api/user.api';
+import { addUser } from 'redux/actions/user.actions';
+import { useLabelsContext } from 'context/LabelsContext/label.context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
-const AuthComponent = ({navigation}) => {
+const AuthComponent = ({ navigation }) => {
   const labels = useLabelsContext();
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
@@ -26,7 +26,7 @@ const AuthComponent = ({navigation}) => {
           setIsLoading(false);
           return;
         }
-        performLoginOrSignup(true, {username: savedUsername, password: savedPassword});
+        performLoginOrSignup(true, { username: savedUsername, password: savedPassword });
         setIsLoading(false);
       } catch (e) {
         console.error('Failed to load credentials', e);
@@ -52,7 +52,7 @@ const AuthComponent = ({navigation}) => {
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('password');
     }
-    performLoginOrSignup(isLogin, {username, password});
+    performLoginOrSignup(isLogin, { username, password });
   };
 
   const fetchUserInfo = async () => {
@@ -66,15 +66,20 @@ const AuthComponent = ({navigation}) => {
     }
   };
 
-  const handleSuccessAuthAction = async () => {
-    await fetchUserInfo();
+  const handleSuccessAuthAction = async authResponse => {
+    try {
+      await fetchUserInfo();
+
+      const cookie = authResponse.authToken;
+      await AsyncStorage.setItem('userToken', cookie);
+    } catch (error) {}
   };
 
   const performLoginOrSignup = async (isLogin, data) => {
     try {
       setIsLoading(true);
       const response = isLogin ? await login(data) : await signUp(data);
-      await handleSuccessAuthAction();
+      await handleSuccessAuthAction(response);
       // const redirectComponent = 'MainProductList'
       const redirectComponent = 'NotesList';
 
