@@ -66,15 +66,20 @@ const AuthComponent = ({ navigation }) => {
     }
   };
 
-  const handleSuccessAuthAction = async () => {
-    await fetchUserInfo();
+  const handleSuccessAuthAction = async authResponse => {
+    try {
+      await fetchUserInfo();
+
+      const cookie = authResponse.authToken;
+      await AsyncStorage.setItem('userToken', cookie);
+    } catch (error) {}
   };
 
   const performLoginOrSignup = async (isLogin, data) => {
     try {
       setIsLoading(true);
       const response = isLogin ? await login(data) : await signUp(data);
-      await handleSuccessAuthAction();
+      await handleSuccessAuthAction(response);
       // const redirectComponent = 'MainProductList'
       const redirectComponent = 'NotesList';
 
