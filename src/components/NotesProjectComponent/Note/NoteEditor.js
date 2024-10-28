@@ -4,19 +4,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import NoteHeader from './NoteHeader';
 import { getNoteById } from 'redux/selectors/note.selectors';
 import TaskModal from '../Task/TaskModal';
-import { createTask } from 'api/task.api';
+import { createTask, updatedTask } from 'api/task.api';
 import { updateNote } from 'api/note.api';
 import * as NoteActions from 'redux/actions/note.actions';
 import { showToast, splitStringAtFirstOccurrence } from 'utils/helpers';
 import { removeComponentsDetailsFromNoteContent } from './noteHelper';
 import TaskNote from '../Task/TaskNote';
 
-const Task = ({ data }) => {
+const Task = ({ data, onEditClicked }) => {
   const [_componentName, restOfContent] = splitStringAtFirstOccurrence(data, ':');
-  const [noteId, noteData] = splitStringAtFirstOccurrence(restOfContent, ':');
+  const [taskId, noteData] = splitStringAtFirstOccurrence(restOfContent, ':');
   const jsonNote = noteData.substring(0, noteData.length - 1);
 
-  return <TaskNote {...JSON.parse(jsonNote)} componentId={noteId} />;
+  return <TaskNote {...JSON.parse(jsonNote)} taskId={taskId} onEditClicked={onEditClicked} />;
 };
 
 const { width } = Dimensions.get('window');
@@ -29,8 +29,8 @@ const NoteEditor = ({ route }) => {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [inputHeight, setInputHeight] = useState(0);
   const [lastSegmentChanged, setLastSegmentChanged] = useState(0);
+  const [editedTask, setEditedTask] = useState({});
 
   const handleSelectionChange = (index, event) => {
     const { start } = event.nativeEvent.selection;
@@ -41,6 +41,7 @@ const NoteEditor = ({ route }) => {
   const openTaskModal = () => {
     setShowCreateTask(true);
     setErrorMessage(null);
+    setEditedTask({});
   };
 
   const closeTaskModal = () => {
@@ -60,9 +61,42 @@ const NoteEditor = ({ route }) => {
       dispatch(NoteActions.updateNote(currentNote._id, noteData));
       showToast('Note saved successfully', true);
     } catch (error) {
-      console.error(error.message);
       setErrorMessage(error.message);
     }
+  };
+
+  const handleEditTask = async task => {
+    if (!validateTask(task)) {
+      setShowCreateTask(false);
+      setErrorMessage('Task data is invalid.');
+    }
+
+    setIsLoading(true);
+
+    try {
+      const taskPayload = { ...task, taskId: undefined, note: currentNote._id };
+      const noteResult = await updatedTask(task.taskId, taskPayload);
+      if (!noteResult) return;
+
+      const noteData = {
+        ...noteResult,
+        note: undefined,
+      };
+
+      dispatch(NoteActions.updateNote(noteResult._id, noteData));
+      setNoteContent(noteResult.content);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
+      setShowCreateTask(false);
+    }
+  };
+
+  const handleEditTaskClicked = taskData => {
+    setShowCreateTask(true);
+    setEditedTask(taskData);
   };
 
   const handleCreateTask = async task => {
@@ -155,7 +189,7 @@ const NoteEditor = ({ route }) => {
           />
         );
       } else if (segment.type === 'task') {
-        return <Task key={index} data={segment.content} />;
+        return <Task key={index} data={segment.content} onEditClicked={handleEditTaskClicked} />;
       }
     });
   };
@@ -170,7 +204,19 @@ const NoteEditor = ({ route }) => {
         <Button title="Save Note" onPress={handleSaveNote} />
         {errorMessage && <Text>{errorMessage}</Text>}
       </View>
-      {showCreateTask && <TaskModal onClose={closeTaskModal} onCreateTask={handleCreateTask} />}
+      {showCreateTask && (
+        <TaskModal
+          onClose={closeTaskModal}
+          onCreateTask={handleCreateTask}
+          onEditTask={handleEditTask}
+          taskId={editedTask.taskId}
+          taskTitle={editedTask.title}
+          taskDescription={editedTask.description}
+          taskCircularTime={editedTask.circulationTime}
+          taskEndDate={editedTask.endDate}
+          taskType={editedTask.type}
+        />
+      )}
     </View>
   );
 };

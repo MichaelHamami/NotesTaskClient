@@ -9,7 +9,7 @@ import * as NoteActions from 'redux/actions/note.actions';
 import ClickableIcon from 'components/baseComponents/ClickableIcon';
 import * as Constant from 'MyConstants';
 
-const TaskNote = ({ title, description, isCompleted, type, endDate, circulationTime, componentId: id }) => {
+const TaskNote = ({ title, description, isCompleted, type, endDate, circulationTime, taskId, onEditClicked }) => {
   const [isSelected, setIsSelected] = useState(isCompleted);
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
   const handleCheckBoxClicked = async () => {
     setIsSelected(prevState => {
       setLoading(true);
-      updatedTask(id, { isCompleted: !prevState })
+      updatedTask(taskId, { isCompleted: !prevState })
         .then(data => {
           setLoading(false);
           onSuccess(data);
@@ -54,11 +54,25 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
     }
   };
 
+  const handleEditClicked = () => {
+    const dataOfTask = {
+      title,
+      description,
+      isCompleted,
+      type,
+      endDate,
+      circulationTime,
+      taskId: taskId,
+    };
+    onEditClicked(dataOfTask);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.notExpandedContainer}>
         <View style={styles.startContainer}>
           <ClickableIcon iconName={'delete'} iconColor={'black'} onPress={handleDeleteTask} />
+          {onEditClicked && <ClickableIcon iconName={'edit'} iconColor={'black'} onPress={handleEditClicked} />}
           <CheckBox value={isSelected} onValueChange={handleCheckBoxClicked} style={styles.checkbox} disabled={isLoading} />
           <Text style={styles.title}>{title}</Text>
         </View>
@@ -69,7 +83,7 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
       </View>
 
       <View style={{ height: expanded ? null : 0, overflow: 'hidden' }}>
-        {description && <Text style={styles.description}>{description}</Text>}
+        {description && <Text style={styles.description}>Description: {description}</Text>}
         <Text style={styles.info}>Type: {getTaskTypeByValue(type)}</Text>
         {endDate && <Text style={styles.info}>End Date: {formattedDateTime(endDate)}</Text>}
         {type === Constant.TASK_TYPE.Circular && (

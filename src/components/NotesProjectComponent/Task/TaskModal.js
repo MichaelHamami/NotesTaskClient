@@ -6,13 +6,13 @@ import moment from 'moment-timezone';
 import { formattedDateTime } from 'utils/helpers';
 import * as Constant from 'MyConstants';
 
-const TaskModal = ({ onClose, onCreateTask }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [type, setType] = useState(Constant.TASK_TYPE.Normal);
-  const [circularTime, setCircularTime] = useState(null);
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
+const TaskModal = ({ onClose, onCreateTask, onEditTask, taskId, taskTitle, taskDescription, taskCircularTime, taskEndDate, taskType }) => {
+  const [title, setTitle] = useState(taskTitle ?? '');
+  const [description, setDescription] = useState(taskDescription ?? '');
+  const [type, setType] = useState(taskType ?? Constant.TASK_TYPE.Normal);
+  const [circularTime, setCircularTime] = useState(taskCircularTime?.toString() ?? null);
+  const [date, setDate] = useState(taskEndDate ? new Date(taskEndDate) : new Date());
+  const [time, setTime] = useState(taskEndDate ? new Date(taskEndDate) : new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -26,10 +26,11 @@ const TaskModal = ({ onClose, onCreateTask }) => {
       description,
       type,
       circulationTime: circularTime,
-      isCompleted: false,
+      isCompleted: taskId ? undefined : false,
       endDate: getCombinedDateTime(),
+      taskId: taskId ?? undefined,
     };
-    onCreateTask(task);
+    taskId ? onEditTask(task) : onCreateTask(task);
   };
 
   const handleCircularChange = time => {
@@ -76,8 +77,16 @@ const TaskModal = ({ onClose, onCreateTask }) => {
               <TextAreaRow label={'Title'} value={title} onChangeText={setTitle} />
               <TextAreaRow label={'Description'} value={description} onChangeText={setDescription} />
               <View style={styles.typeOptionsContainer}>
-                <Button title="Normal" onPress={() => setType(Constant.TASK_TYPE.Normal)} />
-                <Button title="Circular" onPress={() => setType(Constant.TASK_TYPE.Circular)} />
+                <Button
+                  title="Normal"
+                  color={type === Constant.TASK_TYPE.Normal ? '#008000' : undefined}
+                  onPress={() => setType(Constant.TASK_TYPE.Normal)}
+                />
+                <Button
+                  title="Circular"
+                  color={type === Constant.TASK_TYPE.Circular ? '#008000' : undefined}
+                  onPress={() => setType(Constant.TASK_TYPE.Circular)}
+                />
               </View>
               {type === Constant.TASK_TYPE.Circular && (
                 <>
@@ -102,7 +111,7 @@ const TaskModal = ({ onClose, onCreateTask }) => {
             </View>
 
             <View style={styles.modalFooter}>
-              <Button title="Create Task" onPress={handleCreateTask} />
+              <Button title={taskId ? 'Save Task' : 'Create Task'} onPress={handleCreateTask} />
               <Button title="Cancel" onPress={() => onClose()} />
             </View>
           </ScrollView>

@@ -6,7 +6,7 @@ const importComponent = (componentName, componentId, data, index) => {
   try {
     switch (componentName?.toLowerCase()) {
       case '<task':
-        return <TaskNote key={index} {...JSON.parse(data)} componentId={componentId} />;
+        return <TaskNote key={index} {...JSON.parse(data)} taskId={componentId} />;
       default:
         return (
           <Text style={{ color: 'black' }} key={index}>
