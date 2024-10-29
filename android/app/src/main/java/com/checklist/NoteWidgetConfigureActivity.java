@@ -51,15 +51,13 @@ public class NoteWidgetConfigureActivity extends Activity {
 
         notesListView.setOnItemClickListener((parent, view, position, id) -> {
             NoteModel selectedNote = notesList.get(position);
-            String selectedNoteId = selectedNote.getId();
 
             // Save Note to SharedPreferences
             saveSelectedNote(NoteWidgetConfigureActivity.this, appWidgetId, selectedNote);
 
             // Update the widget with the selected note
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(NoteWidgetConfigureActivity.this);
-            NoteWidget.updateAppWidget(NoteWidgetConfigureActivity.this, appWidgetManager, appWidgetId,
-                    selectedNoteId);
+            NoteWidget.updateAppWidget(NoteWidgetConfigureActivity.this, appWidgetManager, appWidgetId);
 
             // Return the result to finish the configuration activity
             Intent resultValue = new Intent();
@@ -83,7 +81,7 @@ public class NoteWidgetConfigureActivity extends Activity {
         CookieModule cookieModule = new CookieModule((ReactApplicationContext) reactContext);
         String cookie = cookieModule.getCookie();
 
-        apiNote.fetchNotes(BuildConfig.API_URL + "/api/note/gets", cookie, new ApiNote.NotesCallback() {
+        apiNote.fetchNotes(BuildConfig.API_URL + "/api/note", cookie, new ApiNote.NotesCallback() {
                     @Override
                     public void onNotesFetched(ArrayList<NoteModel> fetchedNotes) {
                         notesList = fetchedNotes;
@@ -112,6 +110,7 @@ public class NoteWidgetConfigureActivity extends Activity {
                 .putString("noteId_" + appWidgetId, note.getId())
                 .putString("noteContent_" + appWidgetId,note.getContent())
                 .putString("noteTitle_" + appWidgetId,note.getTitle())
+                .putString("noteColor_" + appWidgetId,note.getColor())
                 .apply();
     }
 

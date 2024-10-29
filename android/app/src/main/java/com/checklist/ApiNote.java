@@ -1,6 +1,7 @@
 package com.checklist;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,9 +41,10 @@ public class ApiNote {
                 URL url = new URL(urls[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                urlConnection.setRequestProperty("Cookie", cookie);
+                Log.d("ApiNote",cookie);
+
                 urlConnection.setRequestProperty("token", cookie);
-                urlConnection.setRequestProperty("Accept", "application/json");
+                urlConnection.setRequestProperty("Accept", "*/*");
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
@@ -71,11 +73,14 @@ public class ApiNote {
                     ArrayList<NoteModel> notes = new ArrayList<>();
                     for (int i = 0; i < notesArray.length(); i++) {
                         JSONObject noteObject = notesArray.getJSONObject(i);
+                        Log.d("ApiNote",noteObject.toString());
+
                         String id = noteObject.getString("_id");
                         String title = noteObject.getString("title");
                         String content = noteObject.getString("content");
+                        String color = noteObject.getString("color");
 
-                        NoteModel note = new NoteModel(id, title, content);
+                        NoteModel note = new NoteModel(id, title, content,color);
                         notes.add(note);
                     }
                     callback.onNotesFetched(notes);

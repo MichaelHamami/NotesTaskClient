@@ -6,13 +6,16 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.widget.RemoteViews;
 import android.util.Log;
+
+import org.json.JSONException;
 
 public class NoteWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-            int appWidgetId,String nodeId) {
+            int appWidgetId) {
         Log.d("NoteWidget","updateAppWidget called");
         Intent intent = new Intent(context, MainActivity.class);
 
@@ -20,6 +23,16 @@ public class NoteWidget extends AppWidgetProvider {
         String noteId = pref.getString("noteId_" + appWidgetId, null);
         String noteContent = pref.getString("noteContent_" + appWidgetId, "");
         String noteTitle = pref.getString("noteTitle_" + appWidgetId, "");
+        String noteColor = pref.getString("noteColor_" + appWidgetId,"#ffffff");
+        Log.d("NoteWidget",noteColor);
+
+        String noteFormatted = noteContent;
+
+        try {
+            noteFormatted = NoteHelper.getFormattedContent(noteFormatted);
+
+        } catch (JSONException ignored) {
+        }
 
         intent.putExtra("screenName", "Note");
         intent.putExtra("noteId", noteId);
@@ -28,7 +41,8 @@ public class NoteWidget extends AppWidgetProvider {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.note_widget);
         views.setTextViewText(R.id.widgetNoteTitle, noteTitle);
-        views.setTextViewText(R.id.widgetNoteContent, noteContent);
+        views.setTextViewText(R.id.widgetNoteContent, noteFormatted);
+        views.setInt(R.id.widgetNoteContent, "setBackgroundColor", Color.parseColor(noteColor)); // Example color
         views.setOnClickPendingIntent(R.id.widgetNoteTitle, pendingIntent);
         views.setOnClickPendingIntent(R.id.widgetNoteContent, pendingIntent);
 
@@ -43,7 +57,7 @@ public class NoteWidget extends AppWidgetProvider {
 
         Log.d("NoteWidget","onUpdate called");
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId,"");
+            updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
