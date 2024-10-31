@@ -10,6 +10,7 @@ import * as NoteActions from 'redux/actions/note.actions';
 import { showToast, splitStringAtFirstOccurrence } from 'utils/helpers';
 import { removeComponentsDetailsFromNoteContent } from './noteHelper';
 import TaskNote from '../Task/TaskNote';
+import { useNoteEditorContext } from 'context';
 
 const Task = ({ data, onEditClicked }) => {
   const [_componentName, restOfContent] = splitStringAtFirstOccurrence(data, ':');
@@ -31,6 +32,7 @@ const NoteEditor = ({ route }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [lastSegmentChanged, setLastSegmentChanged] = useState(0);
   const [editedTask, setEditedTask] = useState({});
+  const { noteTitle, setNoteTitle } = useNoteEditorContext();
 
   const handleSelectionChange = (index, event) => {
     const { start } = event.nativeEvent.selection;
@@ -57,7 +59,11 @@ const NoteEditor = ({ route }) => {
 
     try {
       const formattedNoteContent = removeComponentsDetailsFromNoteContent(noteContent);
-      const noteData = await updateNote(currentNote._id, { content: formattedNoteContent });
+      const notePayload = {
+        title: noteTitle || undefined,
+        content: formattedNoteContent,
+      };
+      const noteData = await updateNote(currentNote._id, notePayload);
       dispatch(NoteActions.updateNote(currentNote._id, noteData));
       showToast('Note saved successfully', true);
     } catch (error) {
@@ -154,12 +160,10 @@ const NoteEditor = ({ route }) => {
       lastIndex = regex.lastIndex;
     }
 
-    if (lastIndex < noteContent.length) {
-      segments.push({
-        type: 'text',
-        content: noteContent.slice(lastIndex),
-      });
-    }
+    segments.push({
+      type: 'text',
+      content: noteContent.slice(lastIndex),
+    });
     return segments;
   };
 
@@ -197,7 +201,7 @@ const NoteEditor = ({ route }) => {
   if (!currentNote) return <Text> ...No Content</Text>;
   return (
     <View style={styles.container}>
-      <NoteHeader note={currentNote} isOnEditMode={true} />
+      <NoteHeader note={currentNote} isOnEditMode={true} changeNoteTitle={setNoteTitle} />
       <ScrollView contentContainerStyle={styles.scrollView}>{renderNote()}</ScrollView>
       <View style={styles.footer}>
         <Button title="Add Task" onPress={openTaskModal} />

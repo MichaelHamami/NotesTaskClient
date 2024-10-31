@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import ClickableIcon from 'components/baseComponents/ClickableIcon';
 import * as Constant from 'MyConstants';
@@ -9,11 +9,12 @@ import { updateNote } from 'api/note.api';
 import * as NoteActions from 'redux/actions/note.actions';
 import { showToast } from 'utils/helpers';
 
-const NoteHeader = ({ note, isOnEditMode }) => {
+const NoteHeader = ({ note, isOnEditMode, changeNoteTitle }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [showColorModal, setShowColorModal] = useState(false);
+  const [noteTitle, setNoteTitle] = useState(note.title);
 
   const openNoteEditor = noteId => {
     navigation.navigate('NoteEditor', { noteId: noteId });
@@ -38,6 +39,11 @@ const NoteHeader = ({ note, isOnEditMode }) => {
     handleCloseColorModal();
   };
 
+  const handleTextChange = text => {
+    setNoteTitle(text);
+    changeNoteTitle(text);
+  };
+
   return (
     <View
       style={{
@@ -55,7 +61,7 @@ const NoteHeader = ({ note, isOnEditMode }) => {
           <View style={[styles.colorContainer, { backgroundColor: note.color }]}></View>
         </TouchableOpacity>
       )}
-      <Text>{note.title}</Text>
+      {isOnEditMode ? <TextInput style={styles.textInput} value={noteTitle} onChangeText={handleTextChange} /> : <Text>{note.title}</Text>}
       <ColorsModal visible={showColorModal} closeModal={handleCloseColorModal} onSelectedOption={handleSelectedColor} />
     </View>
   );
@@ -68,6 +74,7 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: Constant.NOTES_PRIMARY_COLOR,
   },
+  textInput: {},
 });
 
 export default NoteHeader;

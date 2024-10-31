@@ -16,7 +16,7 @@ import Settings from './src/components/Settings';
 import Note from './src/components/NotesProjectComponent/Note/Note';
 import NoteEditor from './src/components/NotesProjectComponent/Note/NoteEditor';
 import store from './src/redux/store';
-import { LabelsContextProvider } from './src/context/LabelsContext/label.context';
+import { LabelsContextProvider, NoteEditorContextProvider } from './src/context';
 import { navigationRef, navigate } from './src/services/navigation';
 
 const Stack = createStackNavigator();
@@ -37,25 +37,27 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <LabelsContextProvider>
-        <NavigationContainer ref={navigationRef}>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}>
-            <Stack.Screen name="Login" component={AuthComponent} />
-            <Stack.Screen name="MainProductList" component={MainProductList} />
-            <Stack.Screen name="CreateCategory" component={CreateCategory} />
-            <Stack.Screen name="ProductItem" component={ProductItem} />
-            <Stack.Screen name="CreateList" component={CreateList} />
-            <Stack.Screen name="ProductList" component={ProductList} />
-            <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="Settings" component={Settings} />
-            <Stack.Screen name="NotesList" component={NotesList} />
-            <Stack.Screen name="Home" component={HomeComponent} />
-            <Stack.Screen name="Note" component={Note} />
-            <Stack.Screen name="NoteEditor" component={NoteEditor} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <NoteEditorContextProvider>
+          <NavigationContainer ref={navigationRef}>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}>
+              <Stack.Screen name="Login" component={AuthComponent} />
+              <Stack.Screen name="MainProductList" component={MainProductList} />
+              <Stack.Screen name="CreateCategory" component={CreateCategory} />
+              <Stack.Screen name="ProductItem" component={ProductItem} />
+              <Stack.Screen name="CreateList" component={CreateList} />
+              <Stack.Screen name="ProductList" component={ProductList} />
+              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="Settings" component={Settings} />
+              <Stack.Screen name="NotesList" component={NotesList} />
+              <Stack.Screen name="Home" component={HomeComponent} />
+              <Stack.Screen name="Note" component={Note} />
+              <Stack.Screen name="NoteEditor" component={NoteEditor} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </NoteEditorContextProvider>
       </LabelsContextProvider>
     </Provider>
   );
