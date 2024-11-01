@@ -8,10 +8,12 @@ import ColorsModal from 'components/Modals/ColorsModal';
 import { updateNote } from 'api/note.api';
 import * as NoteActions from 'redux/actions/note.actions';
 import { showToast } from 'utils/helpers';
+import { useAppContext } from 'context';
 
 const NoteHeader = ({ note, isOnEditMode, changeNoteTitle }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { setAppToFinishedLoad, setAppToLoading } = useAppContext();
 
   const [showColorModal, setShowColorModal] = useState(false);
   const [noteTitle, setNoteTitle] = useState(note.title);
@@ -25,12 +27,15 @@ const NoteHeader = ({ note, isOnEditMode, changeNoteTitle }) => {
   };
 
   const handleSaveNote = async color => {
+    setAppToLoading();
     try {
       const noteData = await updateNote(note._id, { color });
       dispatch(NoteActions.updateNote(note._id, noteData));
       showToast('Note saved successfully', true);
     } catch (error) {
       console.error(error.message);
+    } finally {
+      setAppToFinishedLoad();
     }
   };
 

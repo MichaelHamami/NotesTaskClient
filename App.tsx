@@ -14,9 +14,9 @@ import CreateCategory from './src/components/CreateCategory';
 import Profile from './src/components/Profile';
 import Settings from './src/components/Settings';
 import Note from './src/components/NotesProjectComponent/Note/Note';
-import NoteEditor from './src/components/NotesProjectComponent/Note/NoteEditor';
+import NoteEditorWithContext from './src/components/NotesProjectComponent/Note/NoteEditorWithContext';
 import store from './src/redux/store';
-import { LabelsContextProvider, NoteEditorContextProvider } from './src/context';
+import { LabelsContextProvider, AppContextProvider } from './src/context';
 import { navigationRef, navigate } from './src/services/navigation';
 
 const Stack = createStackNavigator();
@@ -37,7 +37,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <LabelsContextProvider>
-        <NoteEditorContextProvider>
+        <AppContextProvider>
           <NavigationContainer ref={navigationRef}>
             <Stack.Navigator
               screenOptions={{
@@ -54,10 +54,10 @@ function App(): React.JSX.Element {
               <Stack.Screen name="NotesList" component={NotesList} />
               <Stack.Screen name="Home" component={HomeComponent} />
               <Stack.Screen name="Note" component={Note} />
-              <Stack.Screen name="NoteEditor" component={NoteEditor} />
+              <Stack.Screen name="NoteEditor" component={NoteEditorWithContext} />
             </Stack.Navigator>
           </NavigationContainer>
-        </NoteEditorContextProvider>
+        </AppContextProvider>
       </LabelsContextProvider>
     </Provider>
   );

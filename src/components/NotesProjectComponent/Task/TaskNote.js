@@ -9,12 +9,14 @@ import { updateWidget } from '../Note/noteHelper';
 import * as NoteActions from 'redux/actions/note.actions';
 import ClickableIcon from 'components/baseComponents/ClickableIcon';
 import * as Constant from 'MyConstants';
+import { useAppContext } from 'context';
 
 const TaskNote = ({ title, description, isCompleted, type, endDate, circulationTime, taskId, onEditClicked }) => {
   const [isSelected, setIsSelected] = useState(isCompleted);
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const { setAppToFinishedLoad, setAppToLoading } = useAppContext();
 
   const handelExpended = () => {
     setExpanded(prevState => !prevState);
@@ -31,6 +33,7 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
   const handleCheckBoxClicked = async () => {
     setIsSelected(prevState => {
       setLoading(true);
+      setAppToLoading(false);
       updatedTask(taskId, { isCompleted: !prevState })
         .then(data => {
           updateWidget();
@@ -40,6 +43,9 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
         .catch(error => {
           console.error('Error updating task:', error.message); // TODO: USE TOAST
           setLoading(false);
+        })
+        .finally(() => {
+          setAppToFinishedLoad(true);
         });
       return !prevState;
     });

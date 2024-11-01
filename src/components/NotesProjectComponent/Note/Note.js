@@ -6,12 +6,17 @@ import { getNoteById } from 'redux/selectors/note.selectors';
 import NoteHeader from './NoteHeader';
 import * as Constant from 'MyConstants';
 import { useNavigation } from '@react-navigation/native';
+import { useAppContext } from 'context';
+import LoadingOverlay from 'components/LoadingOverlay';
 
 const Note = ({ route }) => {
   const navigation = useNavigation();
   const currentNote = useSelector(state => getNoteById(state, route.params.noteId));
   const lastTap = useRef(0);
   const DOUBLE_PRESS_DELAY = 500;
+  const { isAppLoading } = useAppContext();
+
+  const isLoadingComponent = isAppLoading;
 
   const handleDoubleTap = () => {
     const now = Date.now();
@@ -39,6 +44,7 @@ const Note = ({ route }) => {
           <View>{renderContent(currentNote.content)}</View>
         </TouchableWithoutFeedback>
       </ScrollView>
+      <LoadingOverlay visible={isLoadingComponent} />
     </View>
   );
 };

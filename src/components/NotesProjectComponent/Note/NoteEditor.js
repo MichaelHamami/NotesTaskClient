@@ -10,7 +10,8 @@ import * as NoteActions from 'redux/actions/note.actions';
 import { showToast, splitStringAtFirstOccurrence } from 'utils/helpers';
 import { removeComponentsDetailsFromNoteContent, updateWidget } from './noteHelper';
 import TaskNote from '../Task/TaskNote';
-import { useNoteEditorContext } from 'context';
+import LoadingOverlay from 'components/LoadingOverlay';
+import { useNoteEditorContext, useAppContext } from 'context';
 
 const Task = ({ data, onEditClicked }) => {
   const [_componentName, restOfContent] = splitStringAtFirstOccurrence(data, ':');
@@ -22,8 +23,8 @@ const Task = ({ data, onEditClicked }) => {
 
 const { width } = Dimensions.get('window');
 
-const NoteEditor = ({ route }) => {
-  const currentNote = useSelector(state => getNoteById(state, route.params.noteId));
+const NoteEditor = ({ noteId }) => {
+  const currentNote = useSelector(state => getNoteById(state, noteId));
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [noteContent, setNoteContent] = useState(currentNote?.content);
@@ -32,7 +33,11 @@ const NoteEditor = ({ route }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [lastSegmentChanged, setLastSegmentChanged] = useState(0);
   const [editedTask, setEditedTask] = useState({});
+
   const { noteTitle, setNoteTitle } = useNoteEditorContext();
+  const { isAppLoading } = useAppContext();
+
+  const isLoadingComponent = isAppLoading || isLoading;
 
   const handleSelectionChange = (index, event) => {
     const { start } = event.nativeEvent.selection;
@@ -225,6 +230,7 @@ const NoteEditor = ({ route }) => {
           taskType={editedTask.type}
         />
       )}
+      <LoadingOverlay visible={isLoadingComponent} />
     </View>
   );
 };
