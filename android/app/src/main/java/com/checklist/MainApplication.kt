@@ -59,7 +59,7 @@ class MainApplication : Application(), ReactApplication {
 
 class CookiePackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-        return listOf(CookieModule(reactContext))
+        return listOf(CookieModule(reactContext),WidgetUpdateModule(reactContext))
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {

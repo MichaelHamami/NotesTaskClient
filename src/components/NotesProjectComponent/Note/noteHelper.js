@@ -1,6 +1,9 @@
 import { Text } from 'react-native';
 import TaskNote from '../Task/TaskNote';
 import { splitStringAtFirstOccurrence } from '../../../utils/helpers';
+import { NativeModules } from 'react-native';
+
+const { WidgetUpdateModule } = NativeModules;
 
 const importComponent = (componentName, componentId, data, index) => {
   try {
@@ -59,4 +62,11 @@ export const removeComponentsDetailsFromNoteContent = noteContent => {
   } catch (error) {
     return noteContent;
   }
+};
+
+export const updateWidget = () => {
+  console.log('updateWidget in react native update');
+  WidgetUpdateModule.notifyWidgetUpdate()
+    .then(() => console.log('Widget update broadcasted'))
+    .catch(error => console.error('Failed to update widget:', error));
 };

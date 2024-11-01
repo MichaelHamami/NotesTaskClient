@@ -3,9 +3,9 @@ package com.checklist;
 public class NoteModel {
 
     private final String id;
-    private final String title;
-    private final String content;
-    private final String color;
+    private  String title;
+    private String content;
+    private  String color;
 
     public NoteModel(String id, String title,String content,String color) {
         this.id = id;
@@ -23,11 +23,23 @@ public class NoteModel {
         return title;
     }
 
+    public void setTitle(String newTitle){
+        this.title = newTitle;
+    }
+
     public  String getContent(){
         return content;
     }
 
+    public void setContent(String newContent ){
+        this.content = newContent;
+    }
+
     public String getColor() { return  color; }
+
+    public void setColor(String newColor){
+        this.color=newColor;
+    }
 
     @Override
     public String toString() {

@@ -8,7 +8,7 @@ import { createTask, updatedTask } from 'api/task.api';
 import { updateNote } from 'api/note.api';
 import * as NoteActions from 'redux/actions/note.actions';
 import { showToast, splitStringAtFirstOccurrence } from 'utils/helpers';
-import { removeComponentsDetailsFromNoteContent } from './noteHelper';
+import { removeComponentsDetailsFromNoteContent, updateWidget } from './noteHelper';
 import TaskNote from '../Task/TaskNote';
 import { useNoteEditorContext } from 'context';
 
@@ -65,6 +65,7 @@ const NoteEditor = ({ route }) => {
       };
       const noteData = await updateNote(currentNote._id, notePayload);
       dispatch(NoteActions.updateNote(currentNote._id, noteData));
+      updateWidget();
       showToast('Note saved successfully', true);
     } catch (error) {
       setErrorMessage(error.message);
@@ -82,6 +83,7 @@ const NoteEditor = ({ route }) => {
     try {
       const taskPayload = { ...task, taskId: undefined, note: currentNote._id };
       const noteResult = await updatedTask(task.taskId, taskPayload);
+      updateWidget();
       if (!noteResult) return;
 
       const noteData = {
@@ -90,6 +92,7 @@ const NoteEditor = ({ route }) => {
       };
 
       dispatch(NoteActions.updateNote(noteResult._id, noteData));
+
       setNoteContent(noteResult.content);
     } catch (error) {
       console.error(error.message);
@@ -130,6 +133,7 @@ const NoteEditor = ({ route }) => {
           updatedNoteContent += segements[i].content;
         }
         setNoteContent(updatedNoteContent);
+        updateWidget();
       }
     } catch (error) {
       setErrorMessage('Error creating task. Please try again later.');

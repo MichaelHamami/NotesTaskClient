@@ -27,7 +27,7 @@ public class NoteWidgetConfigureActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("NoteWidgetConfigure","onCreate called");
+        Log.d("NoteWidgetConfigure", "onCreate called");
         setContentView(R.layout.activity_note_widget_configure);
 
         setResult(RESULT_CANCELED);
@@ -39,7 +39,7 @@ public class NoteWidgetConfigureActivity extends Activity {
         }
 
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            Log.d("NoteWidgetConfigure","INVALID_APPWIDGET_ID and finish");
+            Log.d("NoteWidgetConfigure", "INVALID_APPWIDGET_ID and finish");
 
             setResult(RESULT_CANCELED);
             finish();
@@ -76,41 +76,42 @@ public class NoteWidgetConfigureActivity extends Activity {
         ReactInstanceManager reactInstanceManager = reactNativeHost.getReactInstanceManager();
         ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
 
-        ApiNote apiNote = new ApiNote();
-
         CookieModule cookieModule = new CookieModule((ReactApplicationContext) reactContext);
         String cookie = cookieModule.getCookie();
 
-        apiNote.fetchNotes(BuildConfig.API_URL + "/api/note", cookie, new ApiNote.NotesCallback() {
-                    @Override
-                    public void onNotesFetched(ArrayList<NoteModel> fetchedNotes) {
-                        notesList = fetchedNotes;
-                        ArrayList<String> noteTitles = new ArrayList<>();
-                        for (NoteModel note : notesList) {
-                            noteTitles.add(note.getTitle());
-                        }
+        ApiNote apiNote = new ApiNote(cookie);
 
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(NoteWidgetConfigureActivity.this, android.R.layout.simple_list_item_1, noteTitles);
-                        notesListView.setAdapter(adapter);
-                    }
+        apiNote.fetchNotes(BuildConfig.API_URL + "/api/note", new ApiNote.FetchAllNotesCallback() {
+            @Override
+            public void onNotesFetched(ArrayList<NoteModel> fetchedNotes) {
+                notesList = fetchedNotes;
+                ArrayList<String> noteTitles = new ArrayList<>();
+                for (NoteModel note : notesList) {
+                    noteTitles.add(note.getTitle());
+                }
 
-                    @Override
-                    public void onError(String message) {
-                        Toast.makeText(NoteWidgetConfigureActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(NoteWidgetConfigureActivity.this,
+                        android.R.layout.simple_list_item_1, noteTitles);
+                notesListView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(NoteWidgetConfigureActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
     private void saveSelectedNote(Context context, int appWidgetId, NoteModel note) {
-        Log.d("NoteWidgetConfigure","saveSelectedNoteId called");
+        Log.d("NoteWidgetConfigure", "saveSelectedNoteId called");
 
         context.getSharedPreferences("NoteWidgetPrefs", MODE_PRIVATE)
                 .edit()
                 .putString("noteId_" + appWidgetId, note.getId())
-                .putString("noteContent_" + appWidgetId,note.getContent())
-                .putString("noteTitle_" + appWidgetId,note.getTitle())
-                .putString("noteColor_" + appWidgetId,note.getColor())
+                .putString("noteContent_" + appWidgetId, note.getContent())
+                .putString("noteTitle_" + appWidgetId, note.getTitle())
+                .putString("noteColor_" + appWidgetId, note.getColor())
                 .apply();
     }
 

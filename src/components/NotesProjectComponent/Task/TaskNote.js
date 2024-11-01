@@ -5,6 +5,7 @@ import CheckBox from '@react-native-community/checkbox';
 import { getTaskTypeByValue } from './taskHelper';
 import { updatedTask, deleteTask } from 'api/task.api';
 import { formattedDateTime } from 'utils/helpers';
+import { updateWidget } from '../Note/noteHelper';
 import * as NoteActions from 'redux/actions/note.actions';
 import ClickableIcon from 'components/baseComponents/ClickableIcon';
 import * as Constant from 'MyConstants';
@@ -32,6 +33,7 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
       setLoading(true);
       updatedTask(taskId, { isCompleted: !prevState })
         .then(data => {
+          updateWidget();
           setLoading(false);
           onSuccess(data);
         })

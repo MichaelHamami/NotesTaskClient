@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import ModalHeader from './ModalHeader';
 
-const COLORS_OPTIONS = ['#000000', '#F323F3', '#B3B2B1', '#534', '#125', '#888', '#777', '#333'];
+const COLORS_OPTIONS = ['#000000', '#F323F3', '#B3B2B1', '#553344', '#112255', '#888888', '#777777', '#333333'];
 
 const ColorsModal = ({ onSelectedOption, visible, closeModal }) => {
   return (
