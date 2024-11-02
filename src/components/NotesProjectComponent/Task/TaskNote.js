@@ -54,11 +54,13 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
   const handleDeleteTask = async () => {
     try {
       setLoading(true);
-      const updatedNote = await deleteTask(id);
+      setAppToLoading(false);
+      const updatedNote = await deleteTask(taskId);
       onSuccess(updatedNote);
     } catch (error) {
     } finally {
       setLoading(false);
+      setAppToFinishedLoad(true);
     }
   };
 
