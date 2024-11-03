@@ -7,6 +7,7 @@ import { addUser } from 'redux/actions/user.actions';
 import { useLabelsContext } from 'context/LabelsContext/label.context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
+import LoadingOverlay from './LoadingOverlay';
 
 const AuthComponent = ({ navigation }) => {
   const labels = useLabelsContext();
@@ -93,10 +94,6 @@ const AuthComponent = ({ navigation }) => {
     }
   };
 
-  if (isLoading) {
-    return <Text>{labels.loading}...</Text>;
-  }
-
   return (
     <View style={styles.container}>
       <TextInput style={styles.input} placeholder={labels.userName} value={username} onChangeText={setUsername} />
@@ -108,6 +105,7 @@ const AuthComponent = ({ navigation }) => {
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       <Button title={labels.login} onPress={() => handleAuthAction(true)} />
       <Button title={labels.signup} onPress={() => handleAuthAction(false)} />
+      <LoadingOverlay visible={isLoading} />
     </View>
   );
 };
