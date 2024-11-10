@@ -37,6 +37,10 @@ public class NoteWidget extends AppWidgetProvider {
         ReactNativeHost reactNativeHost = application.getReactNativeHost();
         ReactInstanceManager reactInstanceManager = reactNativeHost.getReactInstanceManager();
         ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+        if(reactContext == null) {
+            Log.d("NoteWidget","reactContext is null");
+            return;
+        }
         CookieModule cookieModule = new CookieModule((ReactApplicationContext) reactContext);
         String cookie = cookieModule.getCookie();
 

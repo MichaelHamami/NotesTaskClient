@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, Button, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Modal, Button, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TextAreaRow from 'components/baseComponents/TextAreaRow';
 import moment from 'moment-timezone';
 import { formattedDateTime } from 'utils/helpers';
 import * as Constant from 'MyConstants';
+import CircularTime from './CircularTime';
 
 const TaskModal = ({ onClose, onCreateTask, onEditTask, taskId, taskTitle, taskDescription, taskCircularTime, taskEndDate, taskType }) => {
   const [title, setTitle] = useState(taskTitle ?? '');
   const [description, setDescription] = useState(taskDescription ?? '');
   const [type, setType] = useState(taskType ?? Constant.TASK_TYPE.Normal);
-  const [circularTime, setCircularTime] = useState(taskCircularTime?.toString() ?? null);
+  const [circularTime, setCircularTime] = useState(taskCircularTime ?? null);
   const [date, setDate] = useState(taskEndDate ? new Date(taskEndDate) : new Date());
   const [time, setTime] = useState(taskEndDate ? new Date(taskEndDate) : new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -33,8 +34,15 @@ const TaskModal = ({ onClose, onCreateTask, onEditTask, taskId, taskTitle, taskD
     taskId ? onEditTask(task) : onCreateTask(task);
   };
 
-  const handleCircularChange = time => {
-    setCircularTime(time);
+  const handleCircularChange = (field, value) => {
+    if (!circularTime) {
+      setCircularTime({ [field]: value });
+    } else {
+      setCircularTime(prevTime => ({
+        ...prevTime,
+        [field]: value ? parseInt(value) : null, // Parse the value as an integer or set null if empty
+      }));
+    }
   };
 
   const handleChangeDate = (event, selectedDate) => {
@@ -90,21 +98,12 @@ const TaskModal = ({ onClose, onCreateTask, onEditTask, taskId, taskTitle, taskD
               </View>
               {type === Constant.TASK_TYPE.Circular && (
                 <>
-                  <View style={styles.circularContainer}>
-                    <Text>Set a circular time for the task (in minutes)</Text>
-                    <TextInput
-                      value={circularTime}
-                      keyboardType="numeric"
-                      onChangeText={handleCircularChange}
-                      style={{ backgroundColor: '#f3f3', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', padding: 20 }}
-                      maxLength={10}
-                    />
-                  </View>
+                  <CircularTime onCircularChange={handleCircularChange} circularTime={circularTime} />
                   <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                     <Text>Choose End Date</Text>
                   </TouchableOpacity>
                   {showDatePicker && <DateTimePicker value={date} mode="date" display="default" onChange={handleChangeDate} />}
-                  {showTimePicker && <DateTimePicker value={time} mode="time" display="default" onChange={handleChangeTime} />}
+                  {showTimePicker && <DateTimePicker value={time} mode="time" display="default" onChange={handleChangeTime} is24Hour={true} />}
                   <Text>Selected End Date: {formattedDateTime(getCombinedDateTime())}</Text>
                 </>
               )}

@@ -14,9 +14,33 @@ import { useAppContext } from 'context';
 const TaskNote = ({ title, description, isCompleted, type, endDate, circulationTime, taskId, onEditClicked }) => {
   const [isSelected, setIsSelected] = useState(isCompleted);
   const [expanded, setExpanded] = useState(false);
-  const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { setAppToFinishedLoad, setAppToLoading } = useAppContext();
+  const circularLabel = getCircularLabel();
+  console.log(circularLabel);
+  console.log(circulationTime);
+
+  function getCircularLabel() {
+    let label = '';
+    if (type === Constant.TASK_TYPE.Normal) return label;
+
+    if (circulationTime?.years && circulationTime?.years > 0) {
+      label += ` ${circulationTime.years} years`;
+    }
+    if (circulationTime?.months && circulationTime?.months > 0) {
+      label += ` ${circulationTime.months} months`;
+    }
+    if (circulationTime?.days && circulationTime?.days > 0) {
+      label += ` ${circulationTime.days} days`;
+    }
+    if (circulationTime?.minutes && circulationTime?.minutes > 0) {
+      label += ` ${circulationTime.minutes} minutes`;
+    }
+    if (label.length > 0) {
+      label = `Circulation Time:${label}`;
+    }
+    return label;
+  }
 
   const handelExpended = () => {
     setExpanded(prevState => !prevState);
@@ -32,17 +56,14 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
 
   const handleCheckBoxClicked = async () => {
     setIsSelected(prevState => {
-      setLoading(true);
       setAppToLoading(false);
       updatedTask(taskId, { isCompleted: !prevState })
         .then(data => {
           updateWidget();
-          setLoading(false);
           onSuccess(data);
         })
         .catch(error => {
           console.error('Error updating task:', error.message); // TODO: USE TOAST
-          setLoading(false);
         })
         .finally(() => {
           setAppToFinishedLoad(true);
@@ -53,13 +74,11 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
 
   const handleDeleteTask = async () => {
     try {
-      setLoading(true);
       setAppToLoading(false);
       const updatedNote = await deleteTask(taskId);
       onSuccess(updatedNote);
     } catch (error) {
     } finally {
-      setLoading(false);
       setAppToFinishedLoad(true);
     }
   };
@@ -83,7 +102,7 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
         <View style={styles.startContainer}>
           <ClickableIcon iconName={'delete'} iconColor={'black'} onPress={handleDeleteTask} />
           {onEditClicked && <ClickableIcon iconName={'edit'} iconColor={'black'} onPress={handleEditClicked} />}
-          <CheckBox value={isSelected} onValueChange={handleCheckBoxClicked} style={styles.checkbox} disabled={isLoading} />
+          <CheckBox value={isSelected} onValueChange={handleCheckBoxClicked} style={styles.checkbox} />
           <Text style={styles.title}>{title}</Text>
         </View>
 
@@ -98,7 +117,7 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
         {endDate && <Text style={styles.info}>End Date: {formattedDateTime(endDate)}</Text>}
         {type === Constant.TASK_TYPE.Circular && (
           <>
-            <Text style={styles.info}>Circulation Time: {circulationTime} minutes</Text>
+            <Text style={styles.info}>{circularLabel}</Text>
           </>
         )}
         <Text style={styles.info}>Status: {isSelected ? 'Completed' : 'Pending'}</Text>

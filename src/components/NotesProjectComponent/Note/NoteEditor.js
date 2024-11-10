@@ -3,7 +3,7 @@ import { View, TextInput, Button, Text, StyleSheet, Dimensions, ScrollView } fro
 import { useSelector, useDispatch } from 'react-redux';
 import NoteHeader from './NoteHeader';
 import { getNoteById } from 'redux/selectors/note.selectors';
-import TaskModal from '../Task/TaskModal';
+import TaskModal from '../Task/TaskModal/TaskModal';
 import { createTask, updatedTask } from 'api/task.api';
 import { updateNote } from 'api/note.api';
 import * as NoteActions from 'redux/actions/note.actions';
@@ -74,6 +74,8 @@ const NoteEditor = ({ noteId }) => {
       showToast('Note saved successfully', true);
     } catch (error) {
       setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 

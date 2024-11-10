@@ -19,3 +19,8 @@ export async function updateNote(id, data) {
   const response = await axiosInstance.put('/api/note/' + id, data);
   return response.data;
 }
+
+export async function getNote(id) {
+  const response = await axiosInstance.get('/api/note/' + id);
+  return response.data;
+}
