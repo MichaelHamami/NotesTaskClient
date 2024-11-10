@@ -24,14 +24,14 @@ public class TaskParser {
 
     public static List<TaskInfo> parseTasks(String content) {
         List<TaskInfo> taskInfoList = new ArrayList<>();
-        Pattern pattern = Pattern.compile("<Task:([^:]+):\\{([^}]+)\\}>");
+        Pattern pattern = Pattern.compile("<Task:([^:]+):(\\{.*?\\})>");
         Matcher matcher = pattern.matcher(content);
 
         while (matcher.find()) {
             String someId = matcher.group(1);
             String object = matcher.group(2);
 
-            taskInfoList.add(new TaskInfo(someId, "{" +object + "}"));
+            taskInfoList.add(new TaskInfo(someId, object));
         }
         return taskInfoList;
     }

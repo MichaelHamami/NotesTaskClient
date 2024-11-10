@@ -17,8 +17,6 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
   const dispatch = useDispatch();
   const { setAppToFinishedLoad, setAppToLoading } = useAppContext();
   const circularLabel = getCircularLabel();
-  console.log(circularLabel);
-  console.log(circulationTime);
 
   function getCircularLabel() {
     let label = '';
