@@ -6,14 +6,16 @@ import * as Constant from 'MyConstants';
 import { useNavigation } from '@react-navigation/native';
 import ColorsModal from 'components/Modals/ColorsModal';
 import { updateNote } from 'api/note.api';
+import { handleTasks } from 'api/public.api';
 import * as NoteActions from 'redux/actions/note.actions';
 import { showToast } from 'utils/helpers';
 import { useAppContext } from 'context';
+import { updateWidget } from '../Note/noteHelper';
 
 const NoteHeader = ({ note, isOnEditMode, changeNoteTitle }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { setAppToFinishedLoad, setAppToLoading } = useAppContext();
+  const { setAppToFinishedLoad, setAppToLoading, fetchNote } = useAppContext();
 
   const [showColorModal, setShowColorModal] = useState(false);
   const [noteTitle, setNoteTitle] = useState(note.title);
@@ -49,6 +51,18 @@ const NoteHeader = ({ note, isOnEditMode, changeNoteTitle }) => {
     changeNoteTitle(text);
   };
 
+  const handleSyncClicked = async () => {
+    try {
+      setAppToLoading();
+      const result = await handleTasks();
+      await fetchNote(note._id.toString());
+      updateWidget();
+    } catch (error) {
+    } finally {
+      setAppToFinishedLoad();
+    }
+  };
+
   return (
     <View
       style={{
@@ -60,7 +74,9 @@ const NoteHeader = ({ note, isOnEditMode, changeNoteTitle }) => {
         padding: 15,
         gap: 20,
       }}>
+      {!isOnEditMode && <ClickableIcon iconName={'sync'} onPress={handleSyncClicked} />}
       {!isOnEditMode && <ClickableIcon iconName={'edit'} onPress={() => openNoteEditor(note._id.toString())} />}
+
       {isOnEditMode && (
         <TouchableOpacity onPress={() => setShowColorModal(true)}>
           <View style={[styles.colorContainer, { backgroundColor: note.color }]}></View>
