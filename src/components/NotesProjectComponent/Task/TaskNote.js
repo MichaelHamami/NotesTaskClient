@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import CheckBox from '@react-native-community/checkbox';
@@ -17,6 +17,10 @@ const TaskNote = ({ title, description, isCompleted, type, endDate, circulationT
   const dispatch = useDispatch();
   const { setAppToFinishedLoad, setAppToLoading } = useAppContext();
   const circularLabel = getCircularLabel();
+
+  useEffect(() => {
+    setIsSelected(isCompleted);
+  }, [isCompleted]);
 
   function getCircularLabel() {
     let label = '';
