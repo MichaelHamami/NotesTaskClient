@@ -28,10 +28,10 @@ const Note = ({ route }) => {
   };
 
   useEffect(() => {
-    fetchNote();
+    fetchNote(route.params.noteId);
 
     const interval = setInterval(() => {
-      fetchNote();
+      fetchNote(route.params.noteId);
     }, 60 * 60 * 1000);
 
     return () => {
