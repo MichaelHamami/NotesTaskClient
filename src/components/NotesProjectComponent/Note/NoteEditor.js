@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import NoteHeader from './NoteHeader';
@@ -33,11 +33,18 @@ const NoteEditor = ({ noteId }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [lastSegmentChanged, setLastSegmentChanged] = useState(0);
   const [editedTask, setEditedTask] = useState({});
+  const [isNoteUpdated, setIsNoteUpdated] = useState(false);
 
   const { noteTitle, setNoteTitle } = useNoteEditorContext();
   const { isAppLoading } = useAppContext();
 
   const isLoadingComponent = isAppLoading || isLoading;
+
+  useEffect(() => {
+    if (isNoteUpdated) {
+      handleSaveNote(true);
+    }
+  }, [isNoteUpdated]);
 
   const handleSelectionChange = (index, event) => {
     const { start } = event.nativeEvent.selection;
@@ -59,7 +66,7 @@ const NoteEditor = ({ noteId }) => {
     return true;
   };
 
-  const handleSaveNote = async () => {
+  const handleSaveNote = async (isSavedAfterTaskCreated = false) => {
     setIsLoading(true);
 
     try {
@@ -71,11 +78,12 @@ const NoteEditor = ({ noteId }) => {
       const noteData = await updateNote(currentNote._id, notePayload);
       dispatch(NoteActions.updateNote(currentNote._id, noteData));
       updateWidget();
-      showToast('Note saved successfully', true);
+      showToast(isSavedAfterTaskCreated ? 'Note saved after creation of task' : 'Note saved successfully', true);
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
       setIsLoading(false);
+      setIsNoteUpdated(false);
     }
   };
 
@@ -140,7 +148,7 @@ const NoteEditor = ({ noteId }) => {
           updatedNoteContent += segements[i].content;
         }
         setNoteContent(updatedNoteContent);
-        updateWidget();
+        setIsNoteUpdated(true); // Trigger save in useEffect
       }
     } catch (error) {
       setErrorMessage('Error creating task. Please try again later.');
@@ -216,7 +224,7 @@ const NoteEditor = ({ noteId }) => {
       <ScrollView contentContainerStyle={styles.scrollView}>{renderNote()}</ScrollView>
       <View style={styles.footer}>
         <Button title="Add Task" onPress={openTaskModal} />
-        <Button title="Save Note" onPress={handleSaveNote} />
+        <Button title="Save Note" onPress={() => handleSaveNote(false)} />
         {errorMessage && <Text>{errorMessage}</Text>}
       </View>
       {showCreateTask && (
