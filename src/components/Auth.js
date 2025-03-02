@@ -31,7 +31,7 @@ const AuthComponent = ({ navigation }) => {
           return;
         }
 
-        performLoginOrSignup(true, { username: savedUsername, password: savedPassword });
+        await performLoginOrSignup(true, { username: savedUsername, password: savedPassword });
         setIsLoading(false);
       } catch (e) {
         console.error('Failed to load credentials', e);
@@ -57,7 +57,7 @@ const AuthComponent = ({ navigation }) => {
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('password');
     }
-    performLoginOrSignup(isLogin, { username, password });
+    await performLoginOrSignup(isLogin, { username, password });
   };
 
   const fetchUserInfo = async () => {
