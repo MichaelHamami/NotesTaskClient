@@ -8,6 +8,7 @@ import { useLabelsContext } from 'context/LabelsContext/label.context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 import LoadingOverlay from './LoadingOverlay';
+import { showToast } from 'utils/helpers';
 
 const AuthComponent = ({ navigation }) => {
   const labels = useLabelsContext();
@@ -23,10 +24,13 @@ const AuthComponent = ({ navigation }) => {
       try {
         const savedUsername = await AsyncStorage.getItem('username');
         const savedPassword = await AsyncStorage.getItem('password');
+        showToast(`Info from local: username ${savedUsername} ${savedPassword}`, true);
+
         if (!savedUsername || !savedPassword) {
           setIsLoading(false);
           return;
         }
+
         performLoginOrSignup(true, { username: savedUsername, password: savedPassword });
         setIsLoading(false);
       } catch (e) {
@@ -36,7 +40,7 @@ const AuthComponent = ({ navigation }) => {
     };
 
     loadCredentials();
-  }, []);
+  }, [navigation]);
 
   const handleAuthAction = async isLogin => {
     setErrorMessage('');
@@ -87,6 +91,8 @@ const AuthComponent = ({ navigation }) => {
       navigation.navigate(redirectComponent);
     } catch (error) {
       setErrorMessage(labels.defaultAuthErrorMessage);
+      showToast('going to remove local', false);
+
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('password');
     } finally {
