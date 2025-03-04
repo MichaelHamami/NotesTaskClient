@@ -21,11 +21,14 @@ public class NoteHelper {
             String isCompleted = taskObject.getString("isCompleted");
             String description = taskObject.getString("description");
 
-            String statusTask = isCompleted.equals("true") ? "Completed" : "Pending";
-            sb.append(title).append(" Status: ").append(statusTask).append(System.lineSeparator());
-            if(!description.isEmpty()){
-                sb.append(description).append(System.lineSeparator());
+            if(isCompleted.equals("true")) {
+            continue;
             }
+            sb.append(title);
+            if(!description.isEmpty()){
+                sb.append(":").append(description);
+            }
+            sb.append(System.lineSeparator());
         }
         return sb.toString();
     }
